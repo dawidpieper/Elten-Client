@@ -286,8 +286,12 @@ end
          msgtemp = srvproc("message_#{tmp}send","name=#{$name}\&token=#{$token}\&to=#{receiver}\&subject=#{subject}\&buffer=#{bufid}")
                   case msgtemp[0].to_i
          when 0
+play("start_alert")
+play("alert")
            speech("Wiadomość została wysłana")
            speech_wait
+Audio.bgs_stop
+play("stop_alert")
            if @scene != nil
            $scene = @scene
          else
@@ -295,18 +299,30 @@ end
            return
            end
            when -1
+play("start_alert")
+play("alert")
              speech("Błąd połączenia się z bazą danych.")
              speech_wait
+Audio.bgs_stop
+play("stop_alert")
              $scene = Scene_Main.new
              return
              when -2
+play("start_alert")
+play("alert")
                speech("Klucz sesji wygasł.")
                speech_wait
+Audio.bgs_stop
+play("stop_alert")
                $scene = Scene_Loading.new
                return
                when -3
+play("start_alert")
+play("alert")
                  speech("Brak uprawnień")
                  speech_wait
+Audio.bgs_stop
+play("stop_alert")
                  $scene = Scene_Main.new
          end
          end

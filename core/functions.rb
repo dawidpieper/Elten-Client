@@ -2101,13 +2101,57 @@ def versioninfo
       speech_wait
     end
   end
-  
-  def srvproc(mod,param)
-    url = $url + mod + ".php?" + param
-    download(url,"tmp")
-    r = IO.readlines("tmp")
-    File.delete("tmp")
-    return r
-    end
+#old function  
+#  def srvproc(mod,param)
+#    url = $url + mod + ".php?" + param
+#    download(url,"tmp")
+#    r = IO.readlines("tmp")
+#    File.delete("tmp")
+#    return r
+#    end
+
+def srvproc(mod,ent)
+  host = $url.sub("https://","")
+  host.delete!("/")
+  q = "GET /#{mod}.php?#{ent} HTTP/1.1\r\nHost: #{host}\r\nUser-Agent: Elten #{$version.to_s}\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: pl,en-US;q=0.7,en;q=0.3\r\nAccept-Encoding: identity\r\nConnection: keep-alive\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n"
+    addr = Socket.sockaddr_in(80.to_i, host)
+  sock = Socket.new(2,0,0)
+sock.connect(addr).to_s
+t = 0
+for i in 0..q.size - 1
+sock.write(q[i..i])
+t += 1
+if t > 8192
+  t = 0
+  loop_update
+  end
+end
+b = ""
+t = 0
+a = ""
+sc = false
+sz = 0
+loop do
+b = sock.readline
+if sc != 0
+sz = b.gsub("Content-Length: ") do
+sc = true
+""
+end
+end
+if sc == true
+sz = sz.delete("\r\n ")
+sz = sz.to_i
+sc = 0
+end
+break if b.delete("\r\n") == ""
+end
+r = sock.read(sz)
+sock.close
+if r.size >= 3
+r[0..2] = "" if (r.getbyte(0).to_s(16) + r.getbyte(1).to_s(16) + r.getbyte(2).to_s(16)).downcase == "efbbbf"
+end
+return r
+end
 
 #Copyright (C) 2014-2016 Dawid Pieper
