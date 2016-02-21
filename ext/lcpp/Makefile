@@ -118,7 +118,7 @@ empty =
 OUTFLAG = -o $(empty)
 COUTFLAG = -o $(empty)
 
-RUBY_EXTCONF_H = 
+RUBY_EXTCONF_H =
 cflags   =  $(optflags) $(debugflags) $(warnflags)
 cxxflags =  $(optflags) $(debugflags) $(warnflags)
 optflags = -O3 -fno-fast-math
@@ -127,24 +127,24 @@ warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long 
 CCDLFLAGS = -fPIC
 CFLAGS   = $(CCDLFLAGS) -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fPIC $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
-DEFS     = 
+DEFS     =
 CPPFLAGS =  -D_FORTIFY_SOURCE=2 $(DEFS) $(cppflags)  -I/home/zywek/.gem/ruby/2.3.0/gems/rice-2.1.0/ruby/lib/include
 CXXFLAGS = $(CFLAGS)  -Wall -g
 ldflags  = -L. -Wl,-O1,--sort-common,--as-needed,-z,relro -fstack-protector -rdynamic -Wl,-export-dynamic  -L/home/zywek/.gem/ruby/2.3.0/gems/rice-2.1.0/ruby/lib/lib -lrice
-dldflags =  
-ARCH_FLAG = 
+dldflags =
+ARCH_FLAG =
 DLDFLAGS = $(ldflags) $(dldflags) $(ARCH_FLAG)
 LDSHARED = g++ -shared
 LDSHAREDXX = $(CXX) -shared
 AR = ar
-EXEEXT = 
+EXEEXT =
 
 
 RUBY_INSTALL_NAME = $(RUBY_BASE_NAME)
 
 RUBY_SO_NAME = ruby
 
-RUBYW_INSTALL_NAME = 
+RUBYW_INSTALL_NAME =
 
 RUBY_VERSION_NAME = $(RUBY_BASE_NAME)-$(ruby_version)
 
@@ -172,34 +172,39 @@ TOUCH = exit >
 
 #### End of system configuration section. ####
 
-preload = 
+preload =
 
+CCC = gcc
 
 CXX = g++
 
 libpath = . $(libdir)
 LIBPATH =  -L. -L$(libdir)
-DEFFILE = 
+DEFFILE =
 
 CLEANFILES = mkmf.log
-DISTCLEANFILES = 
-DISTCLEANDIRS = 
+DISTCLEANFILES =
+DISTCLEANDIRS =
 
-extout = 
-extout_prefix = 
-target_prefix = 
-LOCAL_LIBS = 
+extout =
+extout_prefix =
+target_prefix =
+LOCAL_LIBS =
 LIBS = -lruby -lpthread -lgmp -ldl -lcrypt -lm -lX11  -lc
-ORIG_SRCS = LinuxCPP.cpp
-SRCS = $(ORIG_SRCS) 
-OBJS = LinuxCPP.o
-HDRS = $(srcdir)/LinuxCPP.h
+ORIG_SRCS =\ LinuxCPP.cpp \ minIni.c
+SRCS = $(ORIG_SRCS)
+OBJS =\
+ LinuxCPP.o \
+minIni.o
+HDRS =\
+$(srcdir)/LinuxCPP.h \
+$(srcdir)/minIni.h
 TARGET = LinuxCPP
 TARGET_NAME = LinuxCPP
 TARGET_ENTRY = Init_$(TARGET_NAME)
 DLLIB = $(TARGET).so
-EXTSTATIC = 
-STATIC_LIB = 
+EXTSTATIC =
+STATIC_LIB =
 
 TIMESTAMP_DIR = .
 BINDIR        = $(bindir)
@@ -210,7 +215,7 @@ HDRDIR        = $(rubyhdrdir)/ruby$(target_prefix)
 ARCHHDRDIR    = $(rubyhdrdir)/$(arch)/ruby$(target_prefix)
 
 TARGET_SO     = $(DLLIB)
-CLEANLIBS     = $(TARGET).so 
+CLEANLIBS     = $(TARGET).so
 CLEANOBJS     = *.o  *.bak
 
 all:    $(DLLIB)
