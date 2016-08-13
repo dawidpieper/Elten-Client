@@ -1,10 +1,10 @@
-#Elten Code
-#Copyright (C) 2014-2016 Dawid Pieper
-#All rights reserved.
-
-#Open Public License is used to licensing this app!
-
-
+#Elten Code
+#Copyright (C) 2014-2016 Dawid Pieper
+#All rights reserved.
+
+
+#Open Public License is used to licensing this app!
+
 # Audio module
 # By Darkleo
 
@@ -13,7 +13,7 @@ module Audio
 end
 
 class AudioFile
-  attr_reader :name
+  attr_reader :name
   attr_reader :sound
   def initialize filename, loopmode = FMod::LOOP_OFF
     @name = filename
@@ -82,11 +82,11 @@ class AudioFile
     @sound.release
     @closed = true
   end
-end
-
-
-
-
+end
+
+
+
+
 # DLL handle
 # By Darkleo
 # Thx to for constants and methods names
@@ -160,9 +160,9 @@ module FMod
       @@id = nil
     end
     def createSound filename, mode=DEFAULT_SOFTWARWE
-      filename.gsub("http://") do
-      return createStream(filename,mode)
-      end
+      filename.gsub("http://") do
+      return createStream(filename,mode)
+      end
       temp = '\x00'*4
       result = CreateSound.call @@id, filename, mode, 0, temp
       fail "File not found: \"#{filename}\"" if result == ERR_FILE_NOT_FOUND
@@ -297,6 +297,5 @@ module FMod
       SetPosition.call @id, pos, unit
     end
   end
-end
-
+end
 #Copyright (C) 2014-2016 Dawid Pieper
