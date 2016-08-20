@@ -22,13 +22,11 @@ loop_update
    end
    def update
      if escape
-       delay
-       speech_stop
+              speech_stop
        $scene = Scene_Main.new
      end
      if enter
-       delay
-       case @sel.index
+              case @sel.index
        when 0
        $scene = Scene_Voice_Voice.new(1)
        when 1
@@ -86,8 +84,7 @@ loop_update
         speech($voicename.call($curnum))
       end
       if alt
-        delay
-        menu
+                menu
         end
       if enter or $selectedvoice == true
                 iniw = Win32API.new('kernel32','WritePrivateProfileString','pppp','i')
@@ -134,7 +131,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(10)
-delay
 return
 end
 end
@@ -169,8 +165,7 @@ if @rate - 1 != @sel.index
   end
       @rate = @sel.index + 1
       if escape
-        delay
-        @rate = @startrate
+                @rate = @startrate
         Win32API.new("screenreaderapi","sapiSetRate",'i','i').call(@rate)
         $scene = Scene_Voice.new
       end

@@ -50,8 +50,7 @@ loop_update
     end
     def update
       if enter
-        delay
-        if @sel.index == @sel.commandoptions.size - 1
+                if @sel.index == @sel.commandoptions.size - 1
         url = input_text("podaj adres URL","ACCEPTESCAPE")
         if url == "\004ESCAPE\004"
           main
@@ -85,8 +84,7 @@ loop_update
       end
         end
       if escape
-        delay
-        $scene = Scene_Main.new
+                $scene = Scene_Main.new
         end
       end
     end
@@ -96,8 +94,7 @@ loop_update
         @id = id
         end
   def main
-    delay
-    mediatemp = srvproc("media","name=#{$name}\&token=#{$token}\&get=#{@id}")
+        mediatemp = srvproc("media","name=#{$name}\&token=#{$token}\&get=#{@id}")
         if mediatemp[0].to_i < 0
       speech("Błąd")
       speech_wait
@@ -144,8 +141,7 @@ loop_update
     end
     def update
       if enter
-        delay
-        if @sel.index < @sel.commandoptions.size - 1
+                if @sel.index < @sel.commandoptions.size - 1
         url = @fileurl[@sel.index]
                 sel = SelectLR.new(["Odtwarzaj","Dodaj do playlisty","Anuluj"])      
           play("menu_open")
@@ -173,8 +169,7 @@ loop_update
       end
         end
       if escape
-        delay
-        $scene = Scene_Media.new
+                $scene = Scene_Media.new
         end
       end
     end
@@ -223,8 +218,7 @@ if (enter or space) and (@form.index == 2 or $key[0x11] == true)
         @id = id
       end
       def main
-        delay
-        @fields = []
+                @fields = []
         @fields[0] = Edit.new("Tytuł","","",true)
         @fields[1] = Edit.new("Adres URL","","",true)
         @fields[2] = Edit.new("Opis","MULTILINE","",true)

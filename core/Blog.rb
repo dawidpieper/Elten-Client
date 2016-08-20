@@ -17,10 +17,9 @@ class Scene_Blog
   end
   def update
     if escape
-      delay
-      $scene = Scene_Main.new
+            $scene = Scene_Main.new
     end
-    if enter
+    if enter or Input.trigger?(Input::RIGHT)
      case @sel.index
      when 0
       $scene = Scene_Blog_My.new
@@ -86,12 +85,10 @@ loop do
   end
 end
 def update
-  if escape
-    delay
-    $scene = Scene_Blog.new
+  if escape or Input.trigger?(Input::LEFT)
+        $scene = Scene_Blog.new
   end
-  if enter
-    delay
+  if enter or Input.trigger?(Input::RIGHT)
     if @sel.index < $postname.size - 2
       $scene = Scene_Blog_My_Posts.new($postid[@sel.index],@sel.index)
     elsif @sel.index == $postname.size - 1
@@ -101,8 +98,7 @@ $scene = Scene_Blog_My_Rename.new
                 end
                     end
   if alt
-    delay
-    menu
+        menu
     end
   end
   def menu
@@ -133,8 +129,7 @@ $scene = Scene_Blog_My_Category_Delete.new($postid[@sel.index])
       end
     Audio.bgs_stop
     play("menu_close")
-        delay
-    end
+            end
 end
 
 class Scene_Blog_My_Create
@@ -147,8 +142,7 @@ if simplequestion == 0
 end
 name = input_text("Podaj nazwę tworzonego bloga.","ACCEPTESCAPE")
 if name == "\004ESCAPE\004" or name == "\004TAB\004"
-  delay
-  $scene = Scene_Main.new
+    $scene = Scene_Main.new
   return
 end
 speech("Proszę czekać...")
@@ -161,7 +155,6 @@ if err < 0
   $scene = Scene_Main.new
   return
 end
-delay(1)
 speech("Blog został utworzony.")
 speech_wait
 $scene = Scene_Main.new
@@ -178,8 +171,7 @@ class Scene_Blog_My_Category_New
       name = input_text("Nazwa kategorii","ACCEPTESCAPE")
     end
     if name == "\004ESCAPE\004" or name == "\004TAB\004"
-      delay
-      $scene = Scene_Blog_My.new
+            $scene = Scene_Blog_My.new
       return
     end
 blogtemp = srvproc("blog_categories_mod","name=#{$name}\&token=#{$token}\&add=1\&categoryid=#{@id.to_s}\&categoryname=#{name}")
@@ -260,28 +252,26 @@ loop do
   end
 end
 def update
-  if escape
-    delay
-    $scene = Scene_Blog_My.new(@categoryselindex)
+  if escape or Input.trigger?(Input::LEFT)
+        $scene = Scene_Blog_My.new(@categoryselindex)
   end
-  if enter
-    delay
-    if @sel.index < $postname.size - 1
+  if enter or Input.trigger?(Input::RIGHT)
+        if @sel.index < $postname.size - 1
       $scene = Scene_Blog_My_Read.new(@id,$postid[@sel.index],@categoryselindex,@sel.index)
     else
       $scene = Scene_Blog_My_Post_New.new(@id,$postmaxid + 1,@categoryselindex)
       end
     end
   if alt
-    delay
-    menu
+        menu
     end
   end
   def menu
     play("menu_open")
     play("menu_background")
-    @menu = SelectLR.new(["Wybierz","Usuń"])
-    @menu.disable_item(1) if @sel.index > $postname.size-1
+    @menu = SelectLR.new(["Wybierz","Edytuj","Usuń"])
+    @menu.disable_item(1) if @sel.index >= $postname.size-1
+    @menu.disable_item(2) if @sel.index >= $postname.size-1
     loop do
       loop_update
       @menu.update
@@ -297,7 +287,13 @@ def update
       $scene = Scene_Blog_My_Post_New.new(@id,$postmaxid + 1,@categoryselindex)
     end
     when 1
+      if @sel.index < $postname.size - 1
+      $scene = Scene_Blog_My_Post_Edit.new(@id,$postid[@sel.index],@categoryselindex,@sel.index)
+      end
+    when 2
+      if @sel.index < $postname.size - 1
       $scene = Scene_Blog_My_Post_Delete.new(@id,$postid[@sel.index],@categoryselindex)
+      end
     end
             break
         end
@@ -334,8 +330,7 @@ loop do
           break
           end
 if escape or ((enter or space) and @form.index == 3)
-  delay
-  $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
+    $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
   return
 end
 end
@@ -379,6 +374,73 @@ class Scene_Blog_My_Post_Delete
     end
   end
 
+  class Scene_Blog_My_Post_Edit
+  def initialize(category,post,categoryselindex=0,postselindex=0)
+    @category = category
+    @postid = post
+    @categoryselindex = categoryselindex
+    @postselindex = postselindex
+  end
+  def main
+    blogtemp = srvproc("blog_read","name=#{$name}\&token=#{$token}\&categoryid=#{@category}\&postid=#{@postid}\&searchname=#{$name}")
+err = blogtemp[0].to_i
+if err < 0
+  speech("Błąd.")
+  speech_wait
+  $scene = Scene_Blog_My.new
+end
+for i in 0..blogtemp.size - 1
+  blogtemp[i].delete!("\n")
+end
+lines = blogtemp[1].to_i
+l = 2
+text = ""
+$posttext = []
+$postauthor = []
+$postid = []
+for i in 0..lines - 1
+  t = 0
+  $posttext[i] = ""
+  loop do
+    t += 1
+    if t > 2
+  $posttext[i] += blogtemp[l].to_s + "\r\n"
+elsif t == 1
+  $postid[i] = blogtemp[l].to_i
+elsif t == 2
+  $postauthor[i] = blogtemp[l]
+  end
+l += 1
+break if blogtemp[l] == "\004END\004" or l >= blogtemp.size or blogtemp[l] == "\004潤\n" or blogtemp[l] == nil
+end
+l += 1
+end
+ @fields = [Edit.new("Treść wpisu","MULTILINE",$posttext[0].delline(2),true),Button.new("Zapisz"),Button.new("Anuluj")]
+@form = Form.new(@fields)
+loop do
+  loop_update
+  @form.update
+  if escape or ((enter or space) and @form.index == 2)
+    $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
+  end
+  if (enter and $key[0x12]) or ((enter or space) and @form.index == 1)
+@form.fields[0].finalize
+    post = @form.fields[0].text_str
+    buf = buffer(post)
+bt = srvproc("blog_posts_mod","name=#{$name}\&token=#{$token}\&categoryid=#{@category.to_s}\&postid=#{@postid.to_s}\&buffer=#{buf.to_s}\&mod=1")
+if bt[0].to_i < 0
+  speech("Błąd")
+else
+  speech("Zapisano")
+  end
+  speech_wait
+$scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)    
+end
+break if $scene != self
+  end
+  end
+  end
+  
 class Scene_Blog_My_Read
   def initialize(category,post,categoryselindex=0,postselindex=0)
     @category = category
@@ -469,8 +531,7 @@ if (enter or space) and @form.index == @form.fields.size - 2
   $scene = Scene_Blog_My_Post_Modify.new(@category,@post,txt,@categoryselindex,@postselindex)
   end
   if escape or ((enter or space) and @form.index == @form.fields.size - 1)
-    delay
-    $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
+        $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
   end
   end
 end
@@ -521,8 +582,7 @@ loop do
           break
           end
 if escape or ((enter or space) and @form.index == 2)
-  delay
-  $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
+    $scene = Scene_Blog_My_Posts.new(@category,@categoryselindex,@postselindex)
   return
 end
 end
@@ -622,18 +682,16 @@ loop do
   end
 end
 def update
-  if escape
-    delay
-      if $blogreturnscene == nil
+  if escape or Input.trigger?(Input::LEFT)
+          if $blogreturnscene == nil
     $scene = Scene_Main.new
   else
     $scene = $blogreturnscene
     $blogreturnscene = nil
     end
   end
-  if enter
-    delay
-      $scene = Scene_Blog_Other_Posts.new($postid[@sel.index],@user,@sel.index)
+  if enter or Input.trigger?(Input::RIGHT)
+          $scene = Scene_Blog_Other_Posts.new($postid[@sel.index],@user,@sel.index)
     end
   end
 end
@@ -681,12 +739,10 @@ loop do
   end
 end
 def update
-  if escape
-    delay
-    $scene = Scene_Blog_Other.new(@user,$blogreturnscene,@categoryselindex)
+  if escape or Input.trigger?(Input::LEFT)
+        $scene = Scene_Blog_Other.new(@user,$blogreturnscene,@categoryselindex)
   end
-  if enter
-    delay
+  if enter or Input.trigger?(Input::RIGHT)
       $scene = Scene_Blog_Other_Read.new(@id,$postid[@sel.index],@user,@categoryselindex,@sel.index)
     end
   end
@@ -778,8 +834,7 @@ def update
             end
       end
   if escape or ((enter or space) and @form.index == @form.fields.size - 1)
-    delay
-    $scene = Scene_Blog_Other_Posts.new(@category,@user,@categoryselindex,@postselindex)
+        $scene = Scene_Blog_Other_Posts.new(@category,@user,@categoryselindex,@postselindex)
   end
   end
 end
@@ -825,8 +880,7 @@ loop do
 end
 def update
   if escape
-  delay
-  $scene = Scene_Blog.new
+    $scene = Scene_Blog.new
   end
       if enter
      $bloglistindex = @sel.index

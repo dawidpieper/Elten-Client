@@ -75,12 +75,10 @@ loop_update
        $sel.update
        update
        if alt
-         delay
-         menu
+                  menu
        end
        if escape
-         delay
-         $scene = Scene_Main.new
+                  $scene = Scene_Main.new
          end
        if $scene != self
          break
@@ -93,13 +91,11 @@ loop_update
            break
            end
          if alt
-           delay
-           menu_no_messages
+                      menu_no_messages
          end
          if escape
 speech_stop
-           delay
-           $scene = Scene_Main.new
+                      $scene = Scene_Main.new
            end
          end
      end
@@ -123,24 +119,20 @@ loop do
   loop_update
   $inpt.update
        if escape
-         delay
-         speech_stop
+                  speech_stop
          break
        end
        if alt
-         delay
-         menu
+                  menu
          if $scene != self
            return
          break
          end
                 end
               end
-              delay
-              loop_update
+                            loop_update
      speech("Wiadomości odebrane: " + $msgsel[$sel.index])
-     delay
- end
+      end
    end
    def menu_no_messages
 play("menu_open")
@@ -169,7 +161,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(10)
-delay
 return
 end
 def menu
@@ -218,7 +209,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(5)
-delay
 end
      end
      
@@ -266,8 +256,7 @@ end
                        end
                      end
                      if escape or ((enter or space) and @form.index == 4)
-                       delay
-                                       if @scene != nil
+                                                              if @scene != nil
            $scene = @scene
          else
            $scene = Scene_Messages.new
@@ -456,12 +445,10 @@ loop_update
        $sel.update
        update
        if alt
-         delay
-         menu
+                  menu
        end
        if escape
-         delay
-         $scene = Scene_Messages.new
+                  $scene = Scene_Messages.new
          end
        if $scene != self
          break
@@ -474,13 +461,11 @@ loop_update
            break
            end
          if alt
-           delay
-           menu_no_messages
+                      menu_no_messages
          end
          if escape
 speech_stop
-           delay
-           $scene = Scene_Messages.new
+                      $scene = Scene_Messages.new
            end
          end
      end
@@ -494,24 +479,20 @@ loop do
   loop_update
   $inpt.update
        if escape
-         delay
-         speech_stop
+                  speech_stop
          break
        end
        if alt
-         delay
-         menu
+                  menu
          if $scene != self
            return
          break
          end
                 end
               end
-              delay
-              loop_update
+                            loop_update
      speech("Wiadomości wysłane: " + $msgsel[$sel.index])
-     delay
- end
+      end
    end
    def menu_no_messages
 play("menu_open")
@@ -537,7 +518,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(10)
-delay
 return
 end
 def menu
@@ -570,7 +550,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(5)
-delay
 end
 end
 

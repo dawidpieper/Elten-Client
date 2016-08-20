@@ -61,7 +61,7 @@ save_data($playlist,"#{$eltendata}\\playlist.eps")
   Graphics.transition(120)
   $exit = true
     exit
-rescue Hangup
+      rescue Hangup
   Graphics.update
   $toscene = true
   retry

@@ -19,7 +19,6 @@ class Scene_MyPermissions
 loop_update
         @sel.update
         if alt
-          delay
           menu
           end
         if escape
@@ -52,7 +51,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(10)
-delay
 return
 end
   end

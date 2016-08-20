@@ -13,8 +13,7 @@ loop_update
                   t.exit
                   end
             if $preinitialized == false
-      delay
-              apps = srvproc("apps","name=#{$name}\&token=#{$token}\&list=1")
+                    apps = srvproc("apps","name=#{$name}\&token=#{$token}\&list=1")
         appname = []
     appversion = []
     appdescription = []
@@ -58,8 +57,7 @@ loop_update
     $appfile = @appfile
   $appversion = @appversion
   $appdescription = @appdescription
-  delay    
-  $preinitialized = true
+    $preinitialized = true
             if FileTest.exists?("#{$eltendata}\\playlist.eps")
       $playlist = load_data("#{$eltendata}\\playlist.eps")
       else
@@ -74,9 +72,7 @@ whatsnew(true)
     $ctrldisable = false
     key_update
         speech("Naciśnij klawisz ALT, aby otworzyć menu")
-    delay
-    Graphics.update
-    ci = 0
+        ci = 0
 plsinfo = false
     loop do
       ci += 1 if ci < 20
@@ -96,8 +92,7 @@ end
         $scene = Scene_MainMenu.new
         end
     if $key[115] == true
-      delay
-      $scene = Scene_Forum.new
+            $scene = Scene_Forum.new
     end
     if escape
       quit

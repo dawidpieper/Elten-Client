@@ -69,6 +69,20 @@ def rdelete!(i)
             s = true if self[i..i] == "\003"
     end
     return str
+  end
+  def b
+    o = []
+    for i in 0..self.size - 1
+      o.push(" "[self[i]])
+    end
+    return o
+    end
+  def urlenc
+    string = self+""
+        r = string.gsub(/([^ a-zA-Z0-9_.-]+)/) do |m|
+      '%' + m.unpack('H2' * m.size).join('%').upcase
+    end.tr(' ', '+')
+    return r
     end
   end
 #Copyright (C) 2014-2016 Dawid Pieper

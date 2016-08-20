@@ -52,20 +52,17 @@ loop_update
       end
       def update
         if escape
-          delay
           $scene = Scene_Main.new
         end
         if alt
-          delay
-          if $contact.size < 1
+                    if $contact.size < 1
           menu_blank
         else
           menu
           end
         end
         if enter and $contact.size > 0
-          delay
-          usermenu($contact[@sel.index],false)
+                    usermenu($contact[@sel.index],false)
           end
         end
         def menu_blank
@@ -79,8 +76,7 @@ loop_update
               break
             end
             if alt or escape
-              delay
-              break
+                            break
               end
             if enter
               case @menu.index
@@ -94,7 +90,6 @@ loop_update
           play("menu_close")
           Audio.bgs_stop
           Graphics.transition(5)
-delay
           return
         end
                 def menu
@@ -108,13 +103,11 @@ loop_update
               break
             end
             if alt or escape
-              delay
-              break
+                            break
               end
             if enter or (Input.trigger?(Input::DOWN) and @menu.index == 0)
               case @menu.index
 when 0
-delay
 if usermenu($contact[@sel.index],true) != "ALT"
 @menu = SelectLR.new(sel)
 else
@@ -130,7 +123,6 @@ end
           play("menu_close")
           Audio.bgs_stop
           Graphics.transition(5)
-delay
           return
           end
         end

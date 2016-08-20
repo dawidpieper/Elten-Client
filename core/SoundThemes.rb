@@ -60,8 +60,7 @@ loop_update
   end
   def update
     if escape
-      delay
-      $scene = Scene_Main.new
+            $scene = Scene_Main.new
     end
     if enter
             if @sel.index < @stsize
@@ -75,8 +74,7 @@ loop_update
       @name = ""
       speech("Błąd.")
       speech_wait
-      delay(1)
-    else
+          else
       $soundthemepath = tmp
       end
     elsif @sel.index == @st.size
@@ -143,13 +141,11 @@ loop_update
    loop_update
    @sel.update
    if escape
-     delay
-     main(canceled=true)
+          main(canceled=true)
      return
    end
    if enter
-     delay
-     downloadtheme(@st_file[@sel.index + 1],@st_name[@sel.index + 1],@st_path[@sel.index + 1])
+          downloadtheme(@st_file[@sel.index + 1],@st_name[@sel.index + 1],@st_path[@sel.index + 1])
      return
      end
    end

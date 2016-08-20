@@ -52,12 +52,10 @@ loop_update
     end
     def st_update
       if escape
-        delay
-        $scene = Scene_Main.new
+                $scene = Scene_Main.new
       end
       if enter
-        delay
-        if Win32API.new($eltenlib,"FilesInDir",'p','p').call(@disks[@sel.index]) != "|||"
+                if Win32API.new($eltenlib,"FilesInDir",'p','p').call(@disks[@sel.index]) != "|||"
         @sd += 1
         files(@disks[@sel.index])
       else
@@ -141,12 +139,10 @@ if tmp[i].size > 0
         def update
           path = $pat
                 if alt
-        delay
-        menu
+                menu
         end
           if escape
-            delay
-            $scene = Scene_Main.new
+                        $scene = Scene_Main.new
 end
      if enter or Input.trigger?(Input::RIGHT)
               @path = "C:" if @path == nil
@@ -171,8 +167,7 @@ end
                end
              end
            end
-         delay
-           case indx
+                    case indx
          when 0
            suc = false
                  for i in 0..@pathes_a.size - 1
@@ -200,12 +195,12 @@ end
            when 2
          end
        else
-         delay
-         nm = futf8(nm).to_s
-ext = File.extname(nm)
+                  nm = futf8(nm).to_s
+nm.gsub!("\\\\","\\")
+         ext = File.extname(nm)
 if ext == ".OGG" or ext == ".ogg" or ext == ".mp3" or ext == ".MP3" or ext == ".wav" or ext == ".WAV" or ext == ".mid" or ext == ".MID" or ext == ".m4a" or ext == ".M4A" or ext == ".avi" or ext == ".AVI"
-  sel = SelectLR.new(["Odtwarzaj","Dodaj do playlisty","Anuluj"])
-  loop do
+  sel = SelectLR.new(["Odtwarzaj","Dodaj do playlisty","Ustaw jako awatar","Anuluj"])
+    loop do
     loop_update
     sel.update
     break if enter or escape
@@ -224,7 +219,9 @@ $mvwcls = cls
 when 1
   $playlist.push(nm)
 speech("Plik #{nm} został dodany do playlisty.")
-  when 2
+when 2
+    avatar_set(nm)
+when 3
     end
   end
 end
@@ -246,8 +243,7 @@ speech(text)
             break
             end
           end
-         delay
-         @sd -= 1
+                  @sd -= 1
          files(File.dirname(@path))
          return
        elsif @sd <= 1 and Input.trigger?(Input::LEFT)
@@ -270,11 +266,9 @@ loop do
 loop_update
 @menu.update
 if alt or escape
-delay
 break
 end
 if enter
-delay
 Input.update
 case @menu.index
 when 0
@@ -323,7 +317,6 @@ loop_update
 @q.update
 if enter
 if @q.index == 1
-delay
 Input.update
   if Win32API.new($eltenlib,"FilesInDir",'p','p').call(nm = @path + "\\" + @files[@sel.index]) == "|||"
 File.delete($path + @files[@sel.index])
@@ -368,7 +361,6 @@ end
 break
 end
 end
-delay
 play("menu_close")
 Audio.bgs_stop
 end

@@ -7,7 +7,7 @@
 
 class Scene_Tray
   def main
-      run("bin\\elten_tray")
+      run("bin\\elten_tray.bin")
   Win32API.new("user32","SetFocus",'i','i').call($wnd)
   Win32API.new("user32","ShowWindow",'ii','i').call($wnd,0)
   Graphics.update

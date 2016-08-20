@@ -54,14 +54,12 @@ class Scene_Chat
       end
       def update
         if escape
-                    delay
-msg = "Opuścił dyskusję"
+                    msg = "Opuścił dyskusję"
     srvproc("chat","name=#{$name}\&token=#{$token}\&send=1\&text=#{msg}")
                     $scene = Scene_Main.new
           end
         if enter
-          delay
-          @msg.finalize
+                    @msg.finalize
           str = @msg.text_str.gsub("\004LINE\004","")
           srvproc("chat","name=#{$name}\&token=#{$token}\&send=1\&text=#{str}")
           play("right")

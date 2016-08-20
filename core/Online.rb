@@ -37,13 +37,10 @@ loop_update
         break
       end
       if alt
-        delay
-        menu
-        delay
-      end
+                menu
+              end
       if enter
-        delay
-        usermenu(@onl[@sel.index],false)
+                usermenu(@onl[@sel.index],false)
         end
       break if $scene != self
       end
@@ -72,8 +69,7 @@ end
 break
 end
 if Input.trigger?(Input::DOWN) and @menu.index == 0
-  delay
-  Input.update
+    Input.update
   if usermenu(@onl[@sel.index],true) != "ALT"
     @menu = SelectLR.new(sel)
   else
@@ -87,7 +83,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(10)
-delay
 if @main == true
   initialize
   main

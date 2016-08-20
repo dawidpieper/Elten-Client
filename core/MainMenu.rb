@@ -12,7 +12,7 @@ def initialize
     play("menu_background")
     speech("Menu")
     speech_wait
-    Graphics.transition(10)
+    Graphics.transition(5)
   end
   def main
         sel = ["Społeczność","Media","Pliki","Programy","Narzędzia","Ustawienia","Pomoc","Wyjście"]
@@ -68,8 +68,7 @@ loop_update
         break
       end
       if Input.trigger?(Input::UP) or escape
-        delay
-        return
+                return
         end
       if enter
   $runprogram = @sel.index
@@ -91,8 +90,7 @@ loop_update
         break
       end
       if Input.trigger?(Input::UP) or escape
-        delay
-        return
+                return
         end
       if enter
         case @sel.index
@@ -136,8 +134,7 @@ loop_update
         break
       end
       if Input.trigger?(Input::UP) or escape
-        delay
-        return
+                return
         end
       if enter
         case @sel.index
@@ -174,8 +171,7 @@ close
         break
       end
       if Input.trigger?(Input::UP) or escape
-        delay
-        return
+                return
         end
       if enter
         case @sel.index
@@ -255,8 +251,7 @@ loop_update
         break
       end
       if Input.trigger?(Input::UP) or escape
-        delay
-        return
+                return
         end
       if enter
         case @sel.index
@@ -317,8 +312,7 @@ loop_update
                end
           end
           if Input.trigger?(Input::UP) or escape
-            delay
-            return
+                        return
             end
           if alt
             close
@@ -359,8 +353,7 @@ loop_update
             end
           end
           if Input.trigger?(Input::UP) or escape
-            delay
-            return
+                        return
             end
           if alt
             close

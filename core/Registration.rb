@@ -48,11 +48,7 @@ class Scene_Registration
     mail = input_text("Podaj swój adres mailowy. Będzie on używany w przypadku zapomnienia hasła i do wysyłania najważniejszych informacji.")
     end
 regtemp = srvproc("register","register=1\&name=#{name}\&password=#{password}\&mail=#{mail}")
-if regtemp.size > 1
 id = regtemp[0].to_i
-else
-  id = -4
-end
 case id
 when 0
   speech("Rejestracja powiodła się, dziękujemy. Możesz teraz się zalogować, używając podanych danych.")

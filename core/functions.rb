@@ -189,31 +189,27 @@ self.index = 0 if @border == false
   end
   if $key[0x23] == true
 @run = true
-    delay
-    self.index = options.size - 1
+        self.index = options.size - 1
       while @grayed[self.index] == true
     self.index -= 1
     end
     end
   if $key[0x24] == true
 @run = true
-    delay
-    self.index = 0
+        self.index = 0
       while @grayed[self.index] == true
     self.index += 1
     end
     end
   if $key[0x21] == true and self.index > 14
-    delay
-    @run = true
+        @run = true
     self.index -= 15
       while @grayed[self.index] == true
     self.index -= 1
     end
     end
     if $key[0x22] == true and self.index < (options.size - 15)
-    delay
-    @run = true
+        @run = true
     self.index += 15
       while @grayed[self.index] == true
     self.index += 1
@@ -222,8 +218,7 @@ self.index = 0 if @border == false
     suc = false
   for i in 65..90
     if $key[i] == true
-      delay
-      for j in self.index + 1..options.size - 1
+            for j in self.index + 1..options.size - 1
         opt =dict( options[j])[0]
         opt -= 32 if opt > 90
         if opt == i and suc == false
@@ -248,10 +243,8 @@ opt = 0 if opt == nil
         end
         @run = true
       if suc == false
-        delay
       else
-        delay
-        if self.index == oldindex
+                if self.index == oldindex
           oldindex = -1
           end
         end
@@ -603,32 +596,28 @@ if Input.trigger?(Input::LEFT)
   end
   if $key[0x23] == true
     @run = true
-    delay
-    self.index = options.size - 1
+        self.index = options.size - 1
     while @grayed[self.index] == true
     self.index -= 1
     end
   end
   if $key[0x24] == true
     @run = true
-    delay
-    self.index = 0
+        self.index = 0
     while @grayed[self.index] == true
     self.index += 1
     end
   end
   if $key[0x21] == true and self.index > 14
     @run = true
-    delay
-    self.index -= 15
+        self.index -= 15
     while @grayed[self.index] == true
     self.index -= 1
     end
   end
     if $key[0x22] == true and self.index < (options.size - 15)
       @run = true
-    delay
-    self.index += 15
+        self.index += 15
     while @grayed[self.index] == true
     self.index += 1
     end
@@ -637,8 +626,7 @@ if Input.trigger?(Input::LEFT)
   for i in 65..90
     if $key[i] == true
       @run = true
-      delay
-      for j in self.index + 1..options.size - 1
+            for j in self.index + 1..options.size - 1
         opt = options[j][0]
         opt -= 32 if opt > 90
         if opt == i and suc == false
@@ -661,10 +649,8 @@ if Input.trigger?(Input::LEFT)
           end
       end
       if suc == false
-delay
       else
-        delay
-        end
+                end
       end
     end
     if enter
@@ -856,6 +842,13 @@ if err == -3
 else
   @incontacts = false
 end
+av = srvproc("avatar","name=#{$name}\&token=#{$token}\&searchname=#{user}\&checkonly=1")
+      err = av[0].to_i
+if err < 0
+  @hasavatar = false
+else
+  @hasavatar = true
+end
 bt = srvproc("isbanned","name=#{$name}\&token=#{$token}\&searchname=#{user}")
 @isbanned = false
 if bt[0].to_i == 0
@@ -863,7 +856,17 @@ if bt[0].to_i == 0
     @isbanned = true
     end
   end
-play("menu_open") if submenu != true
+  bl = srvproc("blog_exist","name=#{$name}\&token=#{$token}\&searchname=#{user}")
+    if bl[0].to_i < 0
+    @hasblog = false
+    else
+  if bl[1].to_i == 0
+    @hasblog = false
+  else
+    @hasblog = true
+    end
+    end
+  play("menu_open") if submenu != true
 play("menu_background") if submenu != true
 sel = ["Napisz prywatną wiadomość","Wizytówka","Otwórz blog tego użytkownika"]
 if @incontacts == true
@@ -871,6 +874,7 @@ if @incontacts == true
 else
   sel.push("Dodaj do kontaktów")
 end
+sel.push("Odtwórz awatar")
 if $rang_moderator > 0
   if @isbanned == false
     sel.push("Zbanuj")
@@ -878,7 +882,9 @@ if $rang_moderator > 0
     sel.push("Odbanuj")
     end
   end
-@menu = SelectLR.new(sel)
+  @menu = SelectLR.new(sel)
+@menu.disable_item(2) if @hasblog == false
+@menu.disable_item(4) if @hasavatar == false
 loop do
 loop_update
 @menu.update
@@ -890,8 +896,7 @@ if enter
       play("menu_close")
       Audio.bgs_stop
       visitingcard(user)
-      delay
-      return("ALT")
+            return("ALT")
       break
             when 2
         $scene = Scene_Blog_Other.new(user,self)
@@ -902,6 +907,13 @@ if enter
         $scene = Scene_Contacts_Insert.new(user,self)
       end
       when 4
+        play("menu_close")
+      Audio.bgs_stop
+      speech("Pobieranie...")
+      avatar(user)
+            return("ALT")
+      break        
+      when 5
         if @isbanned == false
           $scene = Scene_Ban_Ban.new(user,self)
         else
@@ -920,16 +932,14 @@ end
 end
 if escape
   if submenu == true
-    delay
-    return
+        return
     break
   else
         break
     end
   end
   if Input.trigger?(Input::UP) and submenu == true
-    delay
-    Input.update
+        Input.update
     return
     break
     end
@@ -937,7 +947,6 @@ end
 Audio.bgs_stop if submenu != true
 play("menu_close") if submenu != true
 Graphics.transition(10) if submenu != true
-delay
 end
 
                       def playpos(voice,pos,volume=100)
@@ -1136,8 +1145,7 @@ loop do
   loop_update
   sel.update
   if escape
-    delay
-    return
+        return
     break
   end
   if enter
@@ -1181,17 +1189,14 @@ end
 
 def simplequestion(text="")
     @sel = SelectLR.new(["Nie","Tak"],true,0,text)
-  delay
-  loop do
+    loop do
     @sel.update
     loop_update
     if escape
-      delay
-      return(0)
+            return(0)
     end
     if enter
-      delay
-      return(@sel.index)
+            return(@sel.index)
       end
     end
   end
@@ -1493,8 +1498,7 @@ end
 
 def dialog_open
     play("dialog_open")
-    delay
-    if FileTest.exist?("#{$soundthemepath}/BGS/dialog_background.ogg")
+        if FileTest.exist?("#{$soundthemepath}/BGS/dialog_background.ogg")
                           $dialogvoice = AudioFile.new("#{$soundthemepath}/BGS/dialog_background.ogg",2)
                           $dialogvoice.play
                           end
@@ -1573,9 +1577,10 @@ end
 end
 end
 
+
 def avatar(user)
-  avatartemp = srvproc("avatar","name=#{$name}\&token=#{$token}\&searchname=#{user}",1)
-      case avatartemp.strbyline[0].to_i
+  avatartemp = srvproc("avatar","name=#{$name}\&token=#{$token}\&searchname=#{user}\&checkonly=1",1)
+  case avatartemp.strbyline[0].to_i
   when -4
     speech("Użytkownik nie posiada avatara.")
     speech_wait
@@ -1590,31 +1595,48 @@ def avatar(user)
         speech_wait
         return
       end
-                          avatar = avatartemp[3..avatartemp.size-1]
-                                                                    cf = Win32API.new("kernel32","CreateFile",'piipiip','i')
-plik = cf.call("avatarplaytemp",2,1|2|4,nil,2,0,nil)
-writefile = Win32API.new("kernel32","WriteFile",'ipipp','I')
-bp = "\0" * avatar.size
-writefile.call(plik,avatar,avatar.size,bp,nil)
-bp = nil
-Win32API.new("kernel32","CloseHandle",'i','i').call(plik)
-plik = 0
-Audio.bgm_play("avatarplaytemp",100,100)
-loop_update
-loop do
-  loop_update
-  break if enter or escape
-end
-Audio.bgm_stop
+      speech("Awatar: #{user}")
+      speech_wait
+      avatar = AudioFile.new($url+"avatars/"+user)
+avatar.play            
+      loop do
+        loop_update
+        break if enter or escape
+      end
+      avatar.close
       return
-    end
-    
+      end    
     def avatar_set(file)
-            speech("Proszę czekać...")
-            av = sendfile(file)
-        speech_wait
-    avt = srvproc("avatar_mod","name=#{$name}\&token=#{$token}\&avatar=#{av}")
-        if avt[0].to_i < 0
+      speech("Proszę czekać, to może potrwać kilka minut...")
+                              data = ""
+            begin
+            data = read(file).urlenc if data == ""
+          rescue Exception
+            retry
+          end
+                        data = "avatar="+data
+  host = $url.sub("https://","")
+  host.delete!("/")
+  length = data.size
+  q = "POST /avatar_mod.php?name=#{$name}\&token=#{$token} HTTP/1.1\r\nHost: #{host}\r\nUser-Agent: Elten #{$version.to_s}\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: pl,en-US;q=0.7,en;q=0.3\r\nAccept-Encoding: identity\r\nConnection: keep-alive\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: #{length}\r\n\r\n#{data}"
+a = connect(host,80,q)
+a.delete!("\0")
+for i in 0..a.size - 1
+  if a[i..i+3] == "\r\n\r\n"
+    s = i+4
+    break
+    end
+  end
+  if s == nil
+    speech("Błąd")
+    return
+  end
+  sn = a[s..a.size - 1]
+  a = nil
+        bt = strbyline(sn)
+avt = bt[1].to_i
+            speech_wait
+            if avt < 0
       speech("Błąd")
     else
       speech("Zapisano")
@@ -1633,7 +1655,7 @@ if handler < 64
 readfile = Win32API.new("kernel32","ReadFile",'ipipp','I')
 size = File.size(file)
 b = "\0" * (size.to_i+1)
-bp = "\0" * 1048576
+bp = "\0" * (size.to_i+1)
 handleref = readfile.call(handler,b,b.size,bp,nil)
 Win32API.new("kernel32","CloseHandle",'i','i').call(handler)
 handler = 0
@@ -1646,13 +1668,37 @@ def connect(ip,port,data,len=2048)
   sock = Socket.new(2,0,0)
 sock.connect(addr).to_s
 t = 0
-for i in 0..data.size - 1
-sock.send(data[i..i])
-t += 1
-if t > 8192
-  t = 0
+ti = Time.now.to_i
+s = false
+if data.size <= 1048576
+begin
+s = sock.send(data) if s == false
+rescue Exception
   loop_update
-  end
+  retry
+end
+else
+  speech("Wysyłanie...")
+    places = []
+  plc = (data.size / 524288).to_i
+for i in 0..plc-1
+  places.push(data[i*524288..((i+1)*524288)-1])
+end
+places.push(data[(plc)*524288..data.size-1])
+speech_wait
+sent = ""
+  for i in 0..places.size-1
+                loop_update
+        speech(((i.to_f/(plc.to_f+1.0))*100.0).to_i.to_s+"%") if speech_actived == false
+                  s = false
+  begin
+s = sock.send(places[i]) if s == false
+sent += places[i]
+rescue Exception
+  loop_update
+  retry
+end
+end
 end
 b = ""
 t = 0
@@ -1662,14 +1708,17 @@ return b
 end
 
 def buffer_post(data)
+  data = "data="+data
   id = rand(2000000000)
   host = $url.sub("https://","")
   host.delete!("/")
-  length = data.size + 5
+  length = data.size
   data
   data.size
   length
-  q = "POST /buffer_post.php?name=#{$name}\&token=#{$token}&id=#{id.to_s} HTTP/1.1\r\nHost: #{host}\r\nUser-Agent: Elten #{$version.to_s}\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: pl,en-US;q=0.7,en;q=0.3\r\nAccept-Encoding: identity\r\nConnection: keep-alive\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: #{length}\r\n\r\ndata=#{data}"
+  gdata = Zlib::Deflate.deflate(data)
+  glength = gdata.size
+  q = "POST /buffer_post.php?name=#{$name}\&token=#{$token}&id=#{id.to_s} HTTP/1.1\r\nHost: #{host}\r\nUser-Agent: Elten #{$version.to_s}\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: pl,en-US;q=0.7,en;q=0.3\r\nAccept-Encoding: identity\r\nConnection: keep-alive\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: #{length}\r\n\r\n#{data}"
 a = connect(host,80,q)
 a.delete!("\0")
 a
@@ -1699,8 +1748,7 @@ end
   def selectcontact
     speech("Wybierz kontakt")
     speech_wait
-    delay
-    ct = srvproc("contacts","name=#{$name}\&token=#{$token}")
+        ct = srvproc("contacts","name=#{$name}\&token=#{$token}")
         err = ct[0].to_i
     case err
     when -1
@@ -1736,14 +1784,12 @@ loop_update
         sel.update if $contact.size > 0
         if escape
           $focus = true
-          delay
-          return(nil)
+                    return(nil)
         end
         if enter and $contact.size > 0
           $focus = true
           play("list_select")
-          delay
-          return($contact[sel.index])
+                    return($contact[sel.index])
           end
         end
         end
@@ -1830,6 +1876,10 @@ loop_update
                   end
 usrinf[2] = uit[3].to_i
 usrinf[3] = uit[4].to_i
+fp = srvproc("forum_posts","name=#{$name}\&token=#{$token}\&cat=3\&searchname=#{user}")
+if fp[0].to_i == 0
+usrinf[4] = fp[1].to_i
+end
 return usrinf
 end
 
@@ -1954,6 +2004,7 @@ text += "nie " if ui[1] == false
 text += "posiada bloga.\r\n"
 text += "Zna użytkowników: " + ui[2].to_s + "\r\n"
 text += "Znan(y/a) przez użytkowników: " + ui[3].to_s + "\r\n"
+text += "Wpisy na forum: " + ui[4].to_s + "\r\n"
 end
 text += "\r\n\r\n"
       for i in 1..vc.size - 1
@@ -1965,7 +2016,6 @@ text += "\r\n\r\n"
         inptr.update
         break if escape
       end
-      delay
       loop_update
       $focus = true if $scene.is_a?(Scene_Main) == false
       return 0
@@ -2016,15 +2066,15 @@ def strbyline(str)
   return byline
 end
 
-def readfile(file)
+def readfile(file,maxsize=1048576)
 createfile = Win32API.new("kernel32","CreateFile",'piipili','l')
 handler = createfile.call(utf8(file),1,1|2|4,nil,4,0,0)
 if handler < 64
 raise(RuntimeError)
 end
 readfile = Win32API.new("kernel32","ReadFile",'ipipp','I')
-b = "\0" * 1048576
-bp = "\0" * 1048576
+b = "\0" * maxsize
+bp = "\0" * maxsize
 handleref = readfile.call(handler,b,b.size,bp,nil)
 Win32API.new("kernel32","CloseHandle",'i','i').call(handler)
 handler = 0
@@ -2121,8 +2171,8 @@ def versioninfo
   
   def srvproc(mod,param,output=0)
     url = $url + mod + ".php?" + hexspecial(param)
-    download(url,"tmp")
-    case output
+    return ["-1"] if download(url,"tmp") != 0
+        case output
     when 0
     r = IO.readlines("tmp")
     when 1
@@ -2156,5 +2206,31 @@ def versioninfo
             t = t.gsub("Ż","%C5%BB")
             end
             return t
-            end
+          end
+          
+          def hexstring(stri)
+            stro = ""
+t = 0
+            for i in 0..stri.size-1
+              t = t + 1
+              if t > 10000
+                loop_update
+                play("list_focus")
+                t = 0
+                end
+              stro += "%" + stri[i].to_s(16)
+              end
+            return stro
+          end
+          
+          def hexsendfile(file)
+            str = read(file)
+            play("list_focus")
+            loop_update
+                        s = str.urlenc
+                        play("list_focus")
+                        loop_update
+                                                return buffer_post(s)
+                                              end
+                                            
 #Copyright (C) 2014-2016 Dawid Pieper

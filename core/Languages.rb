@@ -9,8 +9,7 @@ class Scene_Languages
   def main
     speech("Zarządzanie językami")
     speech_wait
-    delay
-langstm = Win32API.new($eltenlib,"FilesInDir",'p','p').call($langdata)
+    langstm = Win32API.new($eltenlib,"FilesInDir",'p','p').call($langdata)
 langst = []
 c = 0
 langst[c] = ""
@@ -64,8 +63,7 @@ loop do
 end
 def update
   if escape
-    delay
-    if $token != "" and $token != nil and $name != "" and $name != nil
+        if $token != "" and $token != nil and $name != "" and $name != nil
     $scene = Scene_Main.new
   else
     $scene = Scene_Loading.new

@@ -7,17 +7,16 @@
 
 class Scene_Interface
   def main
-    speech("Ustawienia interfejsu")
+                speech("Ustawienia interfejsu")
     speech_wait
-    delay
-    @field = []
+        @field = []
     @field[0] = Select.new(["Liniowy","Kołowy"],true,0,"Sposób wyświetlania list wyboru",true)
     @field[1] = Edit.new("Czas odświerzania stanu klawiszy (ms) (Uwaga! Nie zaleca się zmiany tej wartości!)","","",true)
     @field[2] = CheckBox.new("Odtwarzaj dźwięki tematu dźwiękowego")
         @field[3] = Select.new(["Znaki","Wyrazy","Znaki i wyrazy","Brak"],true,0,"Echo pisania",true)
     @field[4] = CheckBox.new("Uruchamiaj program w trybie pełnoekranowym")
     @field[5] = CheckBox.new("Włącz automatyczne logowanie")
-    @field[6] = CheckBox.new("Przetwarzaj diakretyki heksagonalnie (zaawansowane), włącz tą opcję, jeśli nie działa przesyłanie na serwer polskich znaków (dotyczy środowiska Wine)")
+    @field[6] = CheckBox.new("Przetwarzaj diakretyki heksagonalnie (zaawansowane)")
     @field[7] = Button.new("Zapisz")
     @field[8] = Button.new("Anuluj")
     @form = Form.new(@field)
@@ -31,7 +30,7 @@ if readini($configdata + "\\login.ini","Login","AutoLogin","0").to_i >= 0
 else
   @form.fields[5].checked = 0
   end
-@form.fields[6].checked = readini($configdata + "\\interface.ini","Interface","HexSpecial","0").to_i
+@form.fields[6].checked = readini($configdata + "\\interface.ini","Interface","HexSpecial","1").to_i
 @field[0].focus  
 loop do
       loop_update
@@ -64,7 +63,7 @@ $scene = Scene_Main.new
 else
   $scene = Scene_Loading.new
   end
-return
+  return
 break
         end
       if escape or ((enter or space) and @form.index == 8)
@@ -73,8 +72,8 @@ $scene = Scene_Main.new
 else
   $scene = Scene_Loading.new
   end
-        return
-        break
+            break
+          return
         end
       end
   end

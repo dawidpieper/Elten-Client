@@ -64,9 +64,9 @@ $interface_ackeyms = $interface_keyms * 3
 $interface_soundthemeactivation = readini($configdata + "\\interface.ini","Interface","SoundThemeActivation","1").to_i
 $interface_typingecho = readini($configdata + "\\interface.ini","Interface","TypingEcho","0").to_i  
 $interface_fullscreen = readini($configdata + "\\interface.ini","Interface","FullScreen","0").to_i
-$interface_hexspecial = readini($configdata + "\\interface.ini","Interface","HexSpecial","0").to_i
+$interface_hexspecial = readini($configdata + "\\interface.ini","Interface","HexSpecial","1").to_i
         if download($url + "bin/elten.ini",$bindata + "\\newest.ini") != 0
-      File.delete("testtemp")
+      File.delete("testtemp") if FileTest.exists?("testtemp")
       $neterror = true
       end
       if $neterror == true
@@ -74,7 +74,8 @@ $interface_hexspecial = readini($configdata + "\\interface.ini","Interface","Hex
     if FileTest.exist?("redirect")
       $neterror = false
       rdr = IO.readlines("redirect")
-      File.delete("redirect") if $DEBUG != true
+      File.delete("redirect") if $DEBUG != true and FileTest.exists?
+      ("redirect") if $DEBUG != true
       if rdr.size > 0
           if rdr[0].size > 0
             $url = rdr[0].delete("\r\n")
@@ -153,7 +154,7 @@ if Win32API.new($eltenlib,"KeyState",'i','i').call(0x74) > 0 and $volume > 1
   sleep(0.1)
 end
 if Win32API.new($eltenlib,"KeyState",'i','i').call(0x72) > 0
-  run("bin\\elten_tray")
+  run("bin\\elten_tray.bin")
   Win32API.new("user32","SetFocus",'i','i').call($wnd)
   Win32API.new("user32","ShowWindow",'ii','i').call($wnd,0)
   Graphics.update  
@@ -188,7 +189,7 @@ rescue Exception
           loop do
             begin
             if $voice != -1
-              sleep(0.05)
+              sleep(0.01)
             Win32API.new("screenreaderapi","nvdaStopSpeech",'v','i').call
             Win32API.new("screenreaderapi","jfwStopSpeech",'v','i').call
             Win32API.new("screenreaderapi","weStopSpeech",'v','i').call

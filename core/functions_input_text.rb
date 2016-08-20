@@ -361,8 +361,7 @@ end
   if $key[0x10] == false and $key[0x11] == false and $key[0x12] == false and $key[0x14] == false
   if $key[0x20]
     if @index >= 100
-      delay
-        @text[@line] = [] if @text[@line] == nil
+              @text[@line] = [] if @text[@line] == nil
         if @index >= @text[@line].size
 @lines = 0 if @lines == nil
 @lines += 1
@@ -856,7 +855,7 @@ end
   if $key[0x08] and (@index > 0 or @line > 0 or (@eline != @line or @index != @eindex)) and @readonly != true
     gc = getcheck
     if @index == @eindex and @line == @eline
-if @text[@line].size > 0 and @index
+if @text[@line].size > 0 and @index > 0
   play("edit_delete")
     espeech(@text[@line][@index - 1])
     @text[@line].delete_at(@index - 1)
@@ -864,11 +863,12 @@ if @text[@line].size > 0 and @index
     @word.chop!
 else
 if @line > 0
+  setindex(@text[@line-1].size)
+  @text[@line-1] += @text[@line]
   play("edit_delete")
 @text.delete_at(@line)
 setline(@line - 1)
 @lines -= 1
-setindex(@text[@line].size)
 end
 end
 elsif @index != @eindex or @line != @eline
@@ -1131,8 +1131,7 @@ espeech(tmp)
   end
       @text[@line] = [] if @text[@line] == nil
       if ($key[0x0D] and $key[0x11] == false and @readonly != true) and @multilines == true
-        delay
-        @text[@line] = [] if @text[@line] == nil
+                @text[@line] = [] if @text[@line] == nil
         if @index >= @text[@line].size
 @lines = 0 if @lines == nil
 @lines += 1
@@ -1330,8 +1329,7 @@ end
 espeech(tmp)
   end
       if ($key[0x0D] and $key[0x11] == false and @readonly != true) and @multilines == true
-        delay
-        @text[@eline] = [] if @text[@eline] == nil
+                @text[@eline] = [] if @text[@eline] == nil
         if @eindex >= @text[@eline].size - 1
 @lines = 0 if @lines == nil
 @lines += 1

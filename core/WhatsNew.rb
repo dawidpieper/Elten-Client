@@ -33,8 +33,7 @@ else
       loop_update
       @sel.update
       if escape
-        delay
-        $scene = Scene_Main.new
+                $scene = Scene_Main.new
       end
       if enter or Input.trigger?(Input::RIGHT)
         case @sel.index
@@ -152,8 +151,7 @@ loop_update
        $sel.update
        update
        if escape or Input.trigger?(Input::LEFT)
-         delay
-         $scene = Scene_WhatsNew.new
+                  $scene = Scene_WhatsNew.new
          end
        if $scene != self
          break
@@ -179,21 +177,18 @@ loop do
   loop_update
   $inpt.update
        if escape
-         delay
-         speech_stop
+                  speech_stop
          break
        end
        if alt
-         delay
-         menu
+                  menu
          if $scene != self
            return
          break
          end
                 end
               end
-              delay
-              loop_update
+                            loop_update
 main
 return
  end
@@ -237,7 +232,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 Graphics.transition(5)
-delay
 end
 end
 
@@ -316,18 +310,15 @@ loop do
       end
       def update
         if escape or Input.trigger?(Input::LEFT)
-          delay
-          $scene = Scene_WhatsNew.new
+                    $scene = Scene_WhatsNew.new
         end
         if enter or Input.trigger?(Input::RIGHT)
-          delay
-          $forumname = @ft_forum[@sel.index]
+                    $forumname = @ft_forum[@sel.index]
           $threadid = @ft_thread[@sel.index]
           $scene = Scene_Forum_Thread.new($threadid,true,0,@ft_newposts[@sel.index],$scene)
         end
         if alt
-          delay
-          menu
+                    menu
           return
           end
         end
@@ -374,7 +365,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 loop_update
-delay
 main
           end
                                 end

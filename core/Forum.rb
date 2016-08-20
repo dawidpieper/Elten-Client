@@ -79,8 +79,7 @@ loop_update
               $scene = Scene_Main.new
             end
             if alt
-              delay
-              menu
+                            menu
               end
             if enter or Input.trigger?(Input::RIGHT)
               if @command.index > 0
@@ -113,7 +112,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 loop_update
-delay
 end
           end
           
@@ -241,15 +239,13 @@ loop_update
           end
           def update
             if alt
-              delay
-              menu
+                            menu
               end
             if escape or Input.trigger?(Input::LEFT)
               $scene = Scene_Forum.new(@forumindex)
             end
             if enter or Input.trigger?(Input::RIGHT)
-              delay
-                            $scene = Scene_Forum_Thread.new($forumid[@command.index],false,@forumindex,$threadnewposts[@command.index].to_i)
+                                          $scene = Scene_Forum_Thread.new($forumid[@command.index],false,@forumindex,$threadnewposts[@command.index].to_i)
               end
             end
             def menu
@@ -306,7 +302,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 loop_update
-delay
 end
           end
           
@@ -405,8 +400,7 @@ loop_update
           end
           def update
                         if escape or ((enter or space) and @form.index == @form.fields.size - 1)
-              delay
-              if @returner == 0
+                            if @returner == 0
               if @ft == false
               $scene = Scene_Forum_Forum.new($forumname,@forumindex,@id)
             else
@@ -417,12 +411,10 @@ loop_update
             end
             end
             if alt
-              delay
-              menu
+                            menu
             end
             if ((enter or space) and @form.index == @form.fields.size - 2) or ($key[0x11] == true and enter and @form.index == @form.fields.size - 3)
-              delay
-@form.fields[@form.fields.size - 3].finalize
+              @form.fields[@form.fields.size - 3].finalize
 text = @form.fields[@form.fields.size - 3].text_str
               buf = buffer(text).to_s
 ft = srvproc("forum_edit","name=" + $name + "&token=" + $token + "&forumname=" + $forumname + "&threadid=" + $threadid + "&buffer=" + buf)
@@ -469,10 +461,11 @@ if $key[0x46] == true
             def menu
 play("menu_open")
 play("menu_background")
-sel = [$postauthorname[$postcur],"Nowy wpis","Odpowiedz z cytatem","Przejdź do ostatniego wpisu","Przejdź do pierwszego nowego wpisu","Anuluj"]
+sel = [$postauthorname[$postcur],"Nowy wpis","Odpowiedz z cytatem","Edytuj wpis", "Przejdź do ostatniego wpisu","Przejdź do pierwszego nowego wpisu","Anuluj"]
 sel.push("Usuń Wpis") if $rang_moderator > 0
 @menu = SelectLR.new(sel)
-@menu.disable_item(4) if @knownposts > $post.size - 1 or @knownposts == -1
+@menu.disable_item(3) if $postauthorname[$postcur] != $name and $rang_moderator != 1
+@menu.disable_item(5) if @knownposts > $post.size - 1 or @knownposts == -1
 loop do
 loop_update
 @menu.update
@@ -493,22 +486,46 @@ when 1
 @form.index = $postcur+1
 @form.fields[$postcur+1].focus
 when 2
-  text = "--Cytat (#{$postauthor[$postcur]}:\r\n#{$post[$postcur]}.delline(3)\r\n) -- Koniec Cytatu"
+  text = "--Cytat (#{$postauthor[$postcur]}:\r\n#{$post[$postcur].delline(3)}\r\n) -- Koniec Cytatu"
     @form.fields[@form.fields.size - 3].settext(text)
   $postcur = $post.size - 1
 @form.index = $postcur+1
 @form.fields[$postcur+1].focus
 when 3
+ fields = [Edit.new("Treść wpisu","MULTILINE",$post[$postcur].delline(3),true),Button.new("Zapisz"),Button.new("Anuluj")]
+ form = Form.new(fields)
+ loop do
+   loop_update
+   form.update
+   if escape or (enter and form.index == 2)
+     @form.fields[@form.index].focus
+   end
+   if (enter and $key[0x11]) or ((enter or space) and form.index == 1)
+     form.fields[0].finalize
+     post = form.fields[0].text_str
+     buf = buffer(post)
+     ef = srvproc("forum_mod","name=#{$name}\&token=#{$token}\&forumname=#{$forumname}\&threadid=#{@id}\&postid=#{$postid[$postcur]}\&buffer=#{buf.to_s}\&edit=1}")
+     if ef[0].to_i < 0
+       speech("Błąd")
+     else
+       speech("Zapisano")
+     end
+     speech_wait
+     main
+     return
+     end
+   end
+when 4
   $postcur = $post.size - 1
 @form.index = $postcur
 @form.fields[$postcur].focus
-when 4
+when 5
   $postcur = @knownposts
 @form.index = $postcur
 @form.fields[$postcur].focus
-when 5
-  $scene = Scene_Forum_Forum.new($forumname,@forumindex,@id)
 when 6
+  $scene = Scene_Forum_Forum.new($forumname,@forumindex,@id)
+when 7
   $scene = Scene_Forum_Thread_Delete.new($forumname,@id,$postid[$postcur],@forumindex)
 end
 break if @menu.index != 0
@@ -520,7 +537,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 loop_update
-delay
 end
           end
           
@@ -554,15 +570,13 @@ end
                                                                         break
                                                                       end
                                                                       if escape or (@form.index == 3 and enter)
-                                                                        delay
-                                                                        loop_update
+                                                                                                                                                loop_update
                                                                         $scene = Scene_Forum_Forum.new($forumname)
                                                                         return
                                                                         break
                                                                         end
                               end
-                            delay
-                            buf = buffer(text).to_s
+                                                        buf = buffer(text).to_s
 addtourl = ""
                             addtourl = "\&uselore=1\&lore=#{@form.fields[4].text_str}" if @form.fields[4] != nil
                             ft = srvproc("forum_edit","name=" + $name + "&token=" + $token + "&forumname=" + forum + "&threadname=" + thread + "&buffer=" + buf + "\&threadid=" + ($threadmaxid + 1).to_s+addtourl)
@@ -767,18 +781,15 @@ loop_update
       end
       def update
         if escape or Input.trigger?(Input::LEFT)
-          delay
-          $scene = Scene_Forum.new
+                    $scene = Scene_Forum.new
         end
         if enter or Input.trigger?(Input::RIGHT)
-          delay
-          $forumname = @ft_forum[@sel.index]
+                    $forumname = @ft_forum[@sel.index]
           $threadid = @ft_thread[@sel.index]
           $scene = Scene_Forum_Thread.new($threadid,true,0,@ft_newposts[@sel.index])
         end
         if alt
-          delay
-          menu
+                    menu
           return
           end
         end
@@ -824,7 +835,6 @@ end
 Audio.bgs_stop
 play("menu_close")
 loop_update
-delay
 main
           end
                                 end

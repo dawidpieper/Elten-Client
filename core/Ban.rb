@@ -36,16 +36,14 @@ end
 end
 def update
   if escape
-    delay
-    if @scene == nil
+        if @scene == nil
       $scene = Scene_Main.new
     else
       $scene = @scene
       end
     end
     if enter
-      delay
-      totime = Time.now.to_i
+            totime = Time.now.to_i
       case @sel.index
    when 0
      totime += 15 * 60
@@ -107,8 +105,7 @@ class Scene_Ban_Unban
         $scene = @scene
         end
     end
-      delay
-            bantemp = srvproc("ban","name=#{$name}\&token=#{$token}\&searchname=#{@user}\&unban=1")
+                  bantemp = srvproc("ban","name=#{$name}\&token=#{$token}\&searchname=#{@user}\&unban=1")
       err = bantemp[0]
 err = err.to_i
 if err == 0
