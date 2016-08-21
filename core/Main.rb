@@ -47,10 +47,8 @@ loop_update
   for i in 0..@appfile.size - 1
         url = $url + "apps\\inis\\#{@appfile[i]}.ini"
     download(url,$appsdata + "\\inis\\#{@appfile[i]}.ini")
-    Graphics.update
-        url = $url + "apps\\#{@appfile[i]}.rb"
+            url = $url + "apps\\#{@appfile[i]}.rb"
     download(url,"apptemp_#{appname[i]}.rb")
-    Graphics.update
     require("./apptemp_#{appname[i]}.rb")
     File.delete("apptemp_#{appname[i]}.rb") if $DEBUG != true
         end
@@ -63,7 +61,7 @@ loop_update
       else
       $playlist = [] if $playlist == nil
       end
-      $playlistindex = 0 if $playlistindex == nil
+            $playlistindex = 0 if $playlistindex == nil
 whatsnew(true)
       return
       end

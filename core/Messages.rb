@@ -50,8 +50,7 @@ class Scene_Messages
            $message[id] = "" if $message[id] == nil
                              $message[id] += $msg[l] if $msg[l] != nil
                   elsif t == 2
-           $message[id] += $msg[l]
-           $subject[id] = $msg[l]
+                      $subject[id] = $msg[l]
          elsif t == 3
            $sender[id] = $msg[l]
          elsif t == 4
@@ -113,7 +112,7 @@ speech_stop
          $read[$msgcur] = Time.now.to_i
          $msgsel[$msgcur] = $subject[$msgcur] + " OD: " + $sender[$msgcur]
          $sel.commandoptions = $msgsel  
-         $inpt = Edit.new($message[$msgcur],"MULTILINE|READONLY")
+         $inpt = Edit.new($subject[$msgcur] + " Od: " + $sender[$msgcur],"MULTILINE|READONLY",$message[$msgcur])
          play("list_select")
 loop do
   loop_update
@@ -420,8 +419,7 @@ loop_update
            $message[id] = "" if $message[id] == nil
                              $message[id] += $msg[l] if $msg[l] != nil
                   elsif t == 2
-           $message[id] += $msg[l]
-           $subject[id] = $msg[l]
+                      $subject[id] = $msg[l]
          elsif t == 3
            $receiver[id] = $msg[l]
          elsif t == 4
@@ -473,7 +471,7 @@ speech_stop
      def update
          $msgcur = $sel.index
          if enter
-                  $inpt = Edit.new($message[$msgcur],"MULTILINE|READONLY")
+                  $inpt = Edit.new($subject[$msgcur] + " Do: " + $receiver[$msgcur],"MULTILINE|READONLY",$message[$msgcur])
          play("list_select")
 loop do
   loop_update

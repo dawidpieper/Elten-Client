@@ -725,7 +725,6 @@ loop_update
                                       for i in 0..ft.size - 1
                                         ft[i].delete!("\n")
                                       end
-                                      Graphics.update
                                       l = 2
                                       @ft_forum = []
                                       @ft_thread = []

@@ -25,8 +25,7 @@ class Scene_Contacts
       for i in 1..ct.size - 1
         ct[i].delete!("\n")
       end
-      Graphics.update
-      for i in 1..ct.size - 1
+            for i in 1..ct.size - 1
         $contact.push(ct[i]) if ct[i].size > 1
       end
       if $contact.size < 1

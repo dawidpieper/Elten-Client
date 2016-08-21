@@ -48,6 +48,7 @@ loop_update
             exit
           end
           if $scene == self
+            loop_update
 @sel = SelectLR.new(sel)
                   @sel.index = index
           speech(sel[@sel.index])
@@ -223,7 +224,8 @@ close
                 index = @sel.index
                 myaccount
                 if $scene == self
-                @sel = SelectLR.new(sel)
+               loop_update
+                  @sel = SelectLR.new(sel)
                 @sel.index = index
                             speech(sel[@sel.index])
                             end

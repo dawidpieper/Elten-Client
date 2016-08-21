@@ -13,13 +13,11 @@ class Scene_Online
       @online[i].delete!("\r")
       @online[i].delete!("\n")
     end
-    Graphics.update
-    onl = []
+        onl = []
     for i in 1..@online.size - 1
       onl.push(@online[i]) if @online[i].size > 0
     end
-    Graphics.update
-    selt = []
+        selt = []
     for i in 0..onl.size - 1
       selt[i] = onl[i] + "." + " " + getstatus(onl[i])
       end

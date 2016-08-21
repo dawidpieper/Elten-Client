@@ -13,13 +13,11 @@ class Scene_Admins
       @admins[i].delete!("\r")
       @admins[i].delete!("\n")
     end
-    Graphics.update
-    adm = []
+        adm = []
     for i in 1..@admins.size - 1
       adm.push(@admins[i]) if @admins[i].size > 0
     end
-    Graphics.update
-    selt = []
+        selt = []
     for i in 0..adm.size - 1
       selt[i] = adm[i] + "." + " " + getstatus(adm[i])
       end

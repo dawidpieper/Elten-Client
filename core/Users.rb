@@ -29,13 +29,11 @@ class Scene_Users
       @users[i].delete!("\r")
       @users[i].delete!("\n")
     end
-    Graphics.update
-    usr = []
+        usr = []
     for i in 1..@users.size - 1
       usr.push(@users[i]) if @users[i].size > 0
     end
-    Graphics.update
-    selt = []
+        selt = []
     for i in 0..usr.size - 1
       selt[i] = usr[i] + ". " + getstatus(usr[i])
       end
