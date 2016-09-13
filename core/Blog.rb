@@ -749,12 +749,13 @@ def update
 end
 
 class Scene_Blog_Other_Read
-  def initialize(category,post,user,categoryselindex=0,postselindex=0)
+  def initialize(category,post,user,categoryselindex=0,postselindex=0,returnscene=nil)
     @category = category
     @post = post
 @user = user
 @categoryselindex = categoryselindex
 @postselindex = postselindex
+@returnscene = returnscene
 end
   def main
 user = @user
@@ -763,7 +764,11 @@ err = blogtemp[0].to_i
 if err < 0
   speech("Błąd.")
   speech_wait
+  if @returnscene == nil  
   $scene = Scene_Blog_Other.new(user,$blogreturnscene)
+else
+  $scene = @returnscene
+  end
 end
 for i in 0..blogtemp.size - 1
   blogtemp[i].delete!("\n")
@@ -834,7 +839,11 @@ def update
             end
       end
   if escape or ((enter or space) and @form.index == @form.fields.size - 1)
+    if @returnscene == nil
         $scene = Scene_Blog_Other_Posts.new(@category,@user,@categoryselindex,@postselindex)
+        else
+        $scene = @returnscene
+        end
   end
   end
 end
@@ -866,16 +875,28 @@ loop do
     end
   break if i >= blogtemp.size - 1
 end
+fol = srvproc("blog_fb","name=#{$name}\&token=#{$token}\&get=1")
+if fol[0].to_i < 0
+  speech("błąd")
+  speech_wait
+  $scene = Scene_Main.new
+  return
+end
+@followedblogs = []
+for i in 2..fol.size-1
+  @followedblogs.push(fol[i].delete("\r\n"))
+  end
 sel = []
 for i in 0..@names.size - 1
   sel[i] = @names[i] + " - Autor: " + @owners[i]
 end
 @sel = Select.new(sel,true,$bloglistindex,"Lista blogów")
+@main = false
 loop do
   loop_update
   @sel.update
   update
-  break if $scene != self
+  break if $scene != self or @main == true
   end
 end
 def update
@@ -885,7 +906,86 @@ def update
       if enter
      $bloglistindex = @sel.index
         $scene = Scene_Blog_Other.new(@owners[@sel.index],$scene)
+      end
+      if alt
+        @main = false
+        menu
+                end
+      end
+      def menu
+play("menu_open")
+play("menu_background")
+sel = [@owners[@sel.index],"Otwórz"]
+isf = false
+for u in @followedblogs
+  isf = true if u == @owners[@sel.index]
+end
+if isf == true
+  sel.push("Usuń ze śledzonych blogów.")
+else
+  sel.push("Dodaj do śledzonych blogów.")
+end
+sel += ["Odśwież","Anuluj"]
+@menu = SelectLR.new(sel)
+loop do
+loop_update
+@menu.update
+break if $scene != self
+if enter
+  case @menu.index
+  when 0
+    if usermenu(@usr[@sel.index],true) != "ALT"
+          @menu = SelectLR.new(sel)
+        else
+          break
         end
+when 1
+  $bloglistindex = @sel.index
+        $scene = Scene_Blog_Other.new(@owners[@sel.index],$scene)
+  when 2
+   if isf == false
+err = srvproc("blog_fb","name=#{$name}\&token=#{$token}\&add=1\&searchname=#{@owners[@sel.index]}")[0].to_i
+if err != 0
+  speech("Błąd")
+else
+  speech("Dodano do śledzonych blogów.")
+  @followedblogs.push(@owners[@sel.index])
+end
+speech_wait
+else
+  err = srvproc("blog_fb","name=#{$name}\&token=#{$token}\&remove=1\&searchname=#{@owners[@sel.index]}")[0].to_i
+if err != 0
+  speech("Błąd")
+else
+  speech("Usunięto z listy śledzonych blogów.")
+  @followedblogs.delete(@owners[@sel.index])
+end
+speech_wait
+end
+        when 3
+          @main = true
+  when 4
+$scene = Scene_Main.new
+end
+break
+end
+if Input.trigger?(Input::DOWN) and @menu.index == 0
+    Input.update
+  if usermenu(@owners[@sel.index],true) != "ALT"
+    @menu = SelectLR.new(sel)
+  else
+    break
+    end
   end
-  end
+if alt or escape
+break
+end
+end
+Audio.bgs_stop
+play("menu_close")
+Graphics.transition(10)
+main if @main == true
+return
+end
+end
 #Copyright (C) 2014-2016 Dawid Pieper

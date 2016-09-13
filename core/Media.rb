@@ -241,18 +241,10 @@ if (enter or space) and (@form.index == 2 or $key[0x11] == true)
             @form.fields[1].finalize
             @form.fields[2].finalize
             filename = @form.fields[0].text_str
-            fileurl = @form.fields[1].text_str
-            filedescription = @form.fields[2].text_str
+            fileurl = @form.fields[1].text_str.gsub("/listen.pls","")
+                        filedescription = @form.fields[2].text_str
 s = false
-if download(fileurl,"fileurltemp") != 0
-  speech("Pliku nie znaleziono!")
-  speech_wait
-  $scene = Scene_Media_Category.new(@id)
-  return
-else
-  File.delete("fileurltemp") if $DEBUG != true
-end
-mt = srvproc("media_mod","name=#{$name}\&token=#{$token}\&set=#{@id.to_s}\&filename=#{filename}\&fileurl=#{fileurl}\&filedescription=#{filedescription}")
+    mt = srvproc("media_mod","name=#{$name}\&token=#{$token}\&set=#{@id.to_s}\&filename=#{filename}\&fileurl=#{fileurl}\&filedescription=#{filedescription}")
 if mt[0].to_i < 0
   speech("Błąd")
   speech_wait

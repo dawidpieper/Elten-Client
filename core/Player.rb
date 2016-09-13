@@ -7,11 +7,11 @@
 
 class Scene_Player
   def initialize(file,scene)
-    @file = file
+    @file = file.delete("\r\n").gsub(" ","%20")
     @scene = scene
   end
   def main
-        @sound = AudioFile.new(@file)
+    @sound = AudioFile.new(@file)
     @sound.play
         loop do
 loop_update

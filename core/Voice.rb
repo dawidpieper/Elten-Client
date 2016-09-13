@@ -7,10 +7,8 @@
 
 class Scene_Voice
   def main
-    speech("Ustawienia mowy")
-    speech_wait
-    sel = ["Zmień syntezator","Zmień szybkość syntezatora","Używaj głosu aktywnego czytnika ekranowego lub domyślnego głosu systemu"]
-    @sel = Select.new(sel)
+        sel = ["Zmień syntezator","Zmień szybkość syntezatora","Zmień głośność syntezy","Używaj głosu aktywnego czytnika ekranowego lub domyślnego głosu systemu"]
+    @sel = Select.new(sel,true,0,"Ustawienia mowy")
     loop do
 loop_update
      @sel.update
@@ -32,6 +30,8 @@ loop_update
        when 1
          $scene = Scene_Voice_Rate.new
          when 2
+           $scene = Scene_Voice_Volume.new
+         when 3
            $voice = -1
                            iniw = Win32API.new('kernel32','WritePrivateProfileString','pppp','i')
                 iniw.call('Sapi','Voice',-1.to_s,$configdata + "\\sapi.ini")
@@ -137,19 +137,15 @@ end
 
 class Scene_Voice_Rate
   def main
-    speech("Wybierz szybkość głosu.")
-    speech_wait
-    sel = []
+        sel = []
     for i in 1..100
       sel.push(i.to_s)
     end
     Graphics.update
     @rate = Win32API.new("screenreaderapi","sapiGetRate",'v','i').call
     @startrate = @rate
-    @sel = Select.new(sel)
-    @sel.index = @rate - 1
-    speech(@rate.to_s)
-    loop do
+    @sel = Select.new(sel,true,@rate - 1,"Wybierz szybkość głosu.")
+            loop do
 loop_update
       @sel.update
       update
@@ -172,6 +168,45 @@ if @rate - 1 != @sel.index
       if enter
                      iniw = Win32API.new('kernel32','WritePrivateProfileString','pppp','i')
                 iniw.call('Sapi','Rate',@rate.to_s,$configdata + "\\sapi.ini")   
+     speech("Zapisano.")
+     speech_wait
+     $scene = Scene_Voice.new
+        end
+      end
+    end
+    
+    class Scene_Voice_Volume
+  def main
+        sel = []
+    for i in 1..100
+      sel.push(i.to_s)
+    end
+        @volume = Win32API.new("screenreaderapi","sapiGetVolume",'v','i').call
+    @startvolume = @volume
+    @sel = Select.new(sel,true,@volume - 1,"Wybierz głośność syntezy.")
+            loop do
+loop_update
+      @sel.update
+      update
+      if $scene != self
+        break
+        end
+      end
+    end
+    def update
+if @volume - 1 != @sel.index
+  @volume = @sel.index + 1
+  Win32API.new("screenreaderapi","sapiSetVolume",'i','i').call(@volume)
+  end
+      @volume = @sel.index + 1
+      if escape
+                @volume = @startvolume
+        Win32API.new("screenreaderapi","sapiSetVolume",'i','i').call(@volume)
+        $scene = Scene_Voice.new
+      end
+      if enter
+                     iniw = Win32API.new('kernel32','WritePrivateProfileString','pppp','i')
+                iniw.call('Sapi','Volume',@volume.to_s,$configdata + "\\sapi.ini")   
      speech("Zapisano.")
      speech_wait
      $scene = Scene_Voice.new

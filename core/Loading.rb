@@ -120,7 +120,7 @@ $showm.call(18,0,2,0)
     Graphics.update
     end
     speech_stop
-    startmessage = "ELTEN: " + $version.to_s.sub("."," . ")
+    startmessage = "ELTEN: " + $version.to_s
     startmessage += " BETA #{$beta.to_s}" if $isbeta == 1
 $voice = 0
             $playlist = []
@@ -258,8 +258,8 @@ if $playlistbuffer == nil
                       $scenes.delete_at(0)
                       while $scene != nil
                         $scene.main
-                        end
-                    end
+                                              end
+                      end
                                         $stopmainthread = true
                     $subthread.value
                     $stopmainthread = false
@@ -272,7 +272,23 @@ loop_update
                   end
                 end
               end
-            $voice = "\0" * 16
+            if $thr5 == nil
+                                                $thr5 = Thread.new do
+                          loop do
+                                                                                    if $token != "" and $token != nil and $name != "" and $name != nil
+                              File.delete("agent_output.tmp") if FileTest.exists?("agent_output.tmp")
+                              sleep(10)
+                              if FileTest.exists?("agent_output.tmp") == false
+play("right")
+                                writefile("agent.tmp","#{$name}\r\n#{$token}\r\n#{$wnd.to_s}")
+    $agentproc = run("bin/elten_agent.bin")
+$agentloaded = true
+                                end
+                              end
+                            end
+                          end
+                          end
+              $voice = "\0" * 16
     Win32API.new("kernel32","GetPrivateProfileString",'pppplp','i').call("Sapi","Voice","-2",$voice,$voice.size,$configdata + "\\sapi.ini")
     $voice.delete!("\0")
     $voice = $voice.to_i
@@ -287,6 +303,11 @@ loop_update
     $rate.delete!("\0")
     $rate = $rate.to_i
     Win32API.new("screenreaderapi","sapiSetRate",'i','i').call($rate)
+    $sapivolume = "\0" * 4
+    Win32API.new("kernel32","GetPrivateProfileString",'pppplp','i').call("Sapi","Volume","100",$sapivolume,$sapivolume.size,$configdata + "\\sapi.ini")
+    $sapivolume.delete!("\0")
+    $sapivolume = $sapivolume.to_i
+    Win32API.new("screenreaderapi","sapiSetVolume",'i','i').call($sapivolume)
   end
           $soundthemespath = "\0" * 64
     Win32API.new("kernel32","GetPrivateProfileString",'pppplp','i').call("SoundTheme","Path","",$soundthemespath,$soundthemespath.size,$configdata + "\\soundtheme.ini")

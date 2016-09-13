@@ -14,15 +14,17 @@ class Scene_WhatsNew
               err = wntemp[0]
 messages = wntemp[1].to_i
 posts = wntemp[2].to_i
+blogposts = wntemp[3].to_i
                                                                                             if @init == true     and (posts > 0 or messages > 0)
 header = "Co nowego"
 else
   header=""
         end
-    @sel = Select.new(["Nowe wiadomości (#{messages.to_s})","Nowe wpisy w śledzonych wątkach (#{posts.to_s})"],true,0,header,true)
+    @sel = Select.new(["Nowe wiadomości (#{messages.to_s})","Nowe wpisy w śledzonych wątkach (#{posts.to_s})","Nowe wpisy na śledzonych blogach (#{blogposts.to_s})"],true,0,header,true)
     @sel.disable_item(0) if messages <= 0
     @sel.disable_item(1) if posts <= 0
-    if posts <= 0 and messages <= 0
+    @sel.disable_item(2) if blogposts <= 0
+    if posts <= 0 and messages <= 0 and blogposts <= 0
       speech("Nie ma nic nowego.")
       speech_wait
       $scene = Scene_Main.new
@@ -41,6 +43,8 @@ else
           $scene = Scene_WhatsNew_Messages.new
           when 1
             $scene = Scene_WhatsNew_Forum.new
+            when 2
+              $scene = Scene_WhatsNew_BlogPosts.new
         end
         end
       break if $scene != self
@@ -366,5 +370,65 @@ play("menu_close")
 loop_update
 main
           end
-                                end
+        end
+        
+        class Scene_WhatsNew_BlogPosts
+          def main
+            bt = srvproc("blog_fb_news","name=#{$name}\&token=#{$token}")
+            if bt[0].to_i < 0
+              speech("Błąd")
+              speech_wait
+              $scene = Scene_WhatsNew.new
+              return
+            end
+            if bt[1].to_i == 0
+              speech("Brak nowych wpisów na śledzonych blogach.")
+              speech_wait
+              $scene = Scene_WhatsNew.new
+              return
+              end
+                         @blogauthor = []
+           @blogcategory = []
+           @blogpost = []
+           @blogpostname = []
+           t = 0
+           id = 0
+           for i in 2..bt.size-1
+                          case t
+             when 0
+                              @blogauthor[id] = bt[i]
+               when 1
+                 @blogcategory[id] = bt[i]
+                 when 2
+                   @blogpost[id] = bt[i]
+                   when 3
+                     @blogpostname[id] = bt[i]
+             end
+             t+=1
+            if t == 4
+              t = 0
+              id += 1
+              end
+             end
+            sel = []
+            for i in 0..@blogpostname.size-1
+              sel.push(@blogpostname[i] + "\r\nAutor " + @blogauthor[i])
+            end
+            @sel = Select.new(sel)
+            loop do
+              loop_update
+              @sel.update
+              update
+              break if $scene != self
+              end
+            end
+            def update
+              if escape or Input.trigger?(Input::LEFT)
+                $scene = Scene_WhatsNew.new
+              end
+             if enter
+               $scene = Scene_Blog_Other_Read.new(@blogcategory[@sel.index],@blogpost[@sel.index],@blogauthor[@sel.index],0,0,$scene)
+               end
+              end
+          end
 #Copyright (C) 2014-2016 Dawid Pieper

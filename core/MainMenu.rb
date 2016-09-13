@@ -10,13 +10,12 @@ def initialize
     $runprogram = nil
     play("menu_open")
     play("menu_background")
-    speech("Menu")
-    speech_wait
-    Graphics.transition(5)
+    @header = "Menu: "
   end
   def main
-        sel = ["Społeczność","Media","Pliki","Programy","Narzędzia","Ustawienia","Pomoc","Wyjście"]
-        @sel = SelectLR.new(sel)
+        sel = ["&Społeczność","&Media","&Pliki","Pro&gramy","&Narzędzia","&Ustawienia","Pomo&c","W&yjście"]
+        @sel = SelectLR.new(sel,true,0,@header)
+        @header = ""
     loop do
 loop_update
       @sel.update
@@ -51,7 +50,7 @@ loop_update
             loop_update
 @sel = SelectLR.new(sel)
                   @sel.index = index
-          speech(sel[@sel.index])
+          @sel.focus
           end
           end
           if escape or alt
@@ -83,7 +82,7 @@ close
         end
                   def help
     Graphics.transition(10)
-    @sel = SelectLR.new(["Lista zmian","Wersja programu","Przeczytaj mnie","Lista skrótów klawiszowych","Zgłoś błąd"])
+    @sel = SelectLR.new(["Lista &zmian","&Wersja programu","&Przeczytaj mnie","Lista &skrótów klawiszowych","Zgłoś &błąd"])
     loop do
 loop_update
       @sel.update
@@ -100,7 +99,7 @@ loop_update
           close
           break
           when 1
-            startmessage = "ELTEN: " + $version.to_s.sub("."," . ")
+            startmessage = "ELTEN: " + $version.to_s
     startmessage += " BETA #{$beta.to_s}" if $isbeta == 1
     speech(startmessage)
             speech_wait
@@ -127,7 +126,7 @@ close
         end
           def settings
     Graphics.transition(10)
-    @sel = SelectLR.new(["Ustawienia interfejsu","Ustawienia głosu","Tematy dźwiękowe","Zarządzanie językami"])
+    @sel = SelectLR.new(["Ustawienia &interfejsu","Ustawienia &głosu","Tematy &dźwiękowe","Zarządzanie &językami"])
     loop do
 loop_update
       @sel.update
@@ -164,7 +163,7 @@ close
         end
   def community
     Graphics.transition(10)
-    @sel = SelectLR.new(sel = ["Wiadomości","Blogi","Forum","Moje kontakty","Użytkownicy, którzy dodali mnie do swoich kontaktów","Chat","Kto jest zalogowany?","Lista użytkowników","Co nowego?","Moje uprawnienia","Rada starszych","Moje Konto"])
+    @sel = SelectLR.new(sel = ["Wiado&mości","&Blogi","&Forum","Moje &kontakty","Użytkownicy, którzy &dodali mnie do swoich kontaktów","&Chat","Kto jest &zalogowany?","Lista &użytkowników","Co &nowego?","Moje u&prawnienia","Rada &starszych","M&oje Konto"])
     loop do
       loop_update
       @sel.update
@@ -227,7 +226,7 @@ close
                loop_update
                   @sel = SelectLR.new(sel)
                 @sel.index = index
-                            speech(sel[@sel.index])
+                            @sel.focus
                             end
             end
           end
@@ -236,7 +235,7 @@ close
             myaccount
             @sel = SelectLR.new(sel)
             @sel.index = index
-            speech(sel[@sel.index])
+            @sel.focus
                        end
           if alt
 close
@@ -245,7 +244,7 @@ close
         end
           def myaccount
     Graphics.transition(10)
-    @sel = SelectLR.new(["Zmień Hasło","Zmień adres e-mail","Moja Wizytówka","Zmiana statusu"])
+    @sel = SelectLR.new(["Zmień &Hasło","Zmień adres e-&mail","Moja &Wizytówka","Zmiana &statusu"])
     loop do
 loop_update
       @sel.update
@@ -282,14 +281,14 @@ close
         end
                   def tools
     Graphics.transition(10)
-    @sel = SelectLR.new(["Generator tematów dźwiękowych","Test prędkości łącza","Aktualizator","Konsola","Kompilator ELTENAPI"])
+    @sel = SelectLR.new(sel=["Generator &tematów dźwiękowych","Test &prędkości łącza","Zarządzanie &programem","&Konsola","Kompilator &ELTENAPI"])
         loop do
 loop_update
       @sel.update
       if $scene != self
         break
       end
-      if enter
+      if enter or (Input.trigger?(Input::DOWN) and @sel.index == 2)
         case @sel.index
         when 0
   $scene = Scene_SoundThemesGenerator.new
@@ -300,10 +299,17 @@ loop_update
    close
    break
   when 2
-    versioninfo   
-    close
-   break
-   when 3
+    index = @sel.index
+    management
+        if $scene == self
+               loop_update
+                  @sel = SelectLR.new(sel)
+                @sel.index = index
+                            @sel.focus
+                          else
+                            return
+                            end
+       when 3
      $scene = Scene_Console.new
      close
      break
@@ -323,7 +329,7 @@ loop_update
         end  
         def exit
     Graphics.transition(10)
-    @sel = SelectLR.new(["Ukryj program w zasobniku systemowym","Wyloguj się","Wyjście","Restart"])
+    @sel = SelectLR.new(["&Ukryj program w zasobniku systemowym","&Wyloguj się","W&yjście","&Restart"])
     loop do
 loop_update
       @sel.update
@@ -365,7 +371,7 @@ loop_update
   def close
     play("menu_close")
 Audio.bgs_fade(2000)
-for i in 1..Graphics.frame_rate * 2
+for i in 1..Graphics.frame_rate
   Graphics.update
   end
     $scene = Scene_Main.new if $scene == self
@@ -377,6 +383,54 @@ for i in 1..Graphics.frame_rate * 2
                 speech_wait
                                 end
                 end
-    end
+              end
+              def management
+     Graphics.transition(10)
+    @sel = SelectLR.new(sel=["Sprawdź dostępność &aktualizacji","&Reinstalacja programu","Przywróć ustawienia &domyślne"])
+    loop do
+      loop_update
+      @sel.update
+      if $scene != self
+        break
+      end
+      if enter
+        case @sel.index
+        when 0
+          versioninfo
+          close
+          break
+          when 1
+            $scene = Scene_ReInstall.new if simplequestion("Czy chcesz przywrócić ostatnią stabilną wersję programu? Wszystkie ustawienia zostaną zachowane.") == 1
+                        close
+            break
+            when 2
+              if simplequestion("Czy jesteś pewien, że chcesz usunąć wszystkie ustawienia programu i przywrócić wartości domyślne? Elten zostanie uruchomiony ponownie.") == 0
+                close
+                break
+                else
+              dr = Dir.entries($configdata)
+              dr.delete(".")
+              dr.delete("..")
+              for file in dr
+                if File.extname(file).downcase == ".ini"
+                  File.delete($configdata+"\\"+file)
+                end
+                  end
+              play("right")
+                  $scene = Scene_Loading.new
+                  close
+              break
+              end
+          end
+          end
+      if Input.trigger?(Input::UP) or escape
+        return
+      end
+      if alt
+        close
+      end
+      
+      end
+                end
   end
 #Copyright (C) 2014-2016 Dawid Pieper

@@ -1130,6 +1130,25 @@ end
 espeech(tmp)
   end
       @text[@line] = [] if @text[@line] == nil
+if ($key[0x0D] and $key[0x11] == false and @readonly == true) and @multilines == true
+  link = ""
+  lso = 0
+  c = @text[@line]
+  for i in 0..c.size-1
+        if lso == 0
+      if c[i].to_s == "h" and c[i+1].to_s == "t" and c[i+2].to_s == "t" and c[i+3].to_s == "p" and (c[i+4].to_s == ":" or c[i+5].to_s == ":") and (c[i+5].to_s == "/" or c[i+6].to_s == "/")
+      lso = 1
+      end
+      end
+    if lso == 1
+      link += c[i].to_s
+      lso = 2 if c[i+1].to_s == " "
+    end
+  end
+  if link != ""
+    system("start #{link}")
+    end
+  end
       if ($key[0x0D] and $key[0x11] == false and @readonly != true) and @multilines == true
                 @text[@line] = [] if @text[@line] == nil
         if @index >= @text[@line].size
@@ -1545,7 +1564,7 @@ def textcopy
   for i in 0..@text.size - 1
     t[i] = []
     for j in 0..@text[i].size - 1
-      t[i][j] = @text[i][j][0..7]
+      t[i][j] = @text[i][j] if @text[i][j] != nil
       end
     end
     return t

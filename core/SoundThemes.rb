@@ -44,11 +44,9 @@ return
   @stsize = $soundtheme.size
   $soundtheme.push("Temat Domyślny")
   Graphics.update
-  speech("Tematy dźwiękowe.")
-  speech_wait
-  @selt = $soundtheme
+    @selt = $soundtheme
   @selt.push("Pobierz tematy dźwiękowe")
-  @sel = Select.new(@selt)
+  @sel = Select.new(@selt,false,0,"Tematy dźwiękowe")
   loop do
 loop_update
     @sel.update

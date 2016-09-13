@@ -7,7 +7,7 @@
 
 class Scene_Compiler
   def main
-        speech("Witaj w kreatorze kompilacji ELTEN API. Aby rozpocząć kompilację, naciśnij enter. Aby zamknąć, naciśnij escape.")
+            speech("Witaj w kreatorze kompilacji ELTEN API. Aby rozpocząć kompilację, naciśnij enter. Aby zamknąć, naciśnij escape.")
     loop do
       loop_update
       break if enter

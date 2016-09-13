@@ -418,7 +418,7 @@ loop_update
 text = @form.fields[@form.fields.size - 3].text_str
               buf = buffer(text).to_s
 ft = srvproc("forum_edit","name=" + $name + "&token=" + $token + "&forumname=" + $forumname + "&threadid=" + $threadid + "&buffer=" + buf)
-download("forum","token=" + $token + "&name=" + $name + "&forum=2&forumname=" + $forumname + "&threadid=" + $threadid)
+srvproc("forum","token=" + $token + "&name=" + $name + "&forum=2&forumname=" + $forumname + "&threadid=" + $threadid)
 if ft[0].to_i == 0
   speech("Wpis został utworzony.")
 else

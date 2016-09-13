@@ -68,7 +68,7 @@ whatsnew(true)
     $speech_lasttext = ""
     speech_stop
     $ctrldisable = false
-    key_update
+        key_update
         speech("Naciśnij klawisz ALT, aby otworzyć menu")
         ci = 0
 plsinfo = false

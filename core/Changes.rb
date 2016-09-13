@@ -398,6 +398,13 @@ Wersja 1.396:
 Poprawki
 
 2016-07-22
+","
+Wersja 1.397:
+Zmiany:
+Dodana możliwość aktualizacji do wersji beta
+Dodana możliwość kopiowania treści komunikatów błędów do schowka
+
+2016-09-09
 "]
 @changes.reverse!
 @selt = []
@@ -414,7 +421,8 @@ loop do
 end
 def update
   if escape
-        $scene = Scene_Main.new
+    delay
+    $scene = Scene_Main.new
   end
   if enter
     input_text(@selt[@sel.index],"MULTILINE|READONLY|ACCEPTESCAPE",@changes[@sel.index])

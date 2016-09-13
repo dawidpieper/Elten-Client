@@ -137,8 +137,8 @@ password_c += mn.to_s
     end
  end
   writefile("agent.tmp","#{$name}\r\n#{$token}\r\n#{$wnd.to_s}")
-if $agentloaded != true
-  run("bin/elten_agent.bin")
+  if $agentloaded != true
+  $agentproc = run("bin/elten_agent.bin")
 $agentloaded = true
 end
 if $speech_wait == true

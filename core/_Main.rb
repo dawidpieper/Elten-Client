@@ -5,7 +5,9 @@
 
 #Open Public License is used to licensing this app!
 
-      begin
+begin
+  end
+begin
 $mainthread = Thread::current
 $stopmainthread         = false
 #main
@@ -31,6 +33,7 @@ $toscene = false
     break
     end
   end
+  writefile("agent_exit.tmp","\r\n")
   play("logout")
   speech_wait
   $playlist = [] if $playlist == nil
@@ -59,6 +62,8 @@ save_data($playlist,"#{$eltendata}\\playlist.eps")
             delay(1)
   # Fade out
   Graphics.transition(120)
+  File.delete("agent_exit.tmp") if FileTest.exists?("agent_exit.tmp")
+  File.delete("agent_output.tmp") if FileTest.exists?("agent_output.tmp")
   $exit = true
     exit
       rescue Hangup
@@ -123,24 +128,28 @@ rescue SystemExit
       sleep(0.15)
       bug
     end
-speech("Co chcesz zrobić?")
-speech_wait
-sel = SelectLR.new(["Restart","Spróbuj ponownie","Uruchom tryb awaryjny","Przerwij działanie aplikacji"])
+sel = SelectLR.new(["Skopiuj treść błędu do schowka","Restart","Spróbuj ponownie","Uruchom tryb awaryjny","Przerwij działanie aplikacji"],true,0,"Co chcesz zrobić?")
 loop do
   loop_update
   sel.update
   if enter
+    if sel.index > 0
     break
+  else
+    msg = $!.to_s+"\r\n"+$@.to_s
+    Win32API.new($eltenlib,"CopyToClipboard",'pi','i').call(msg,msg.size+1)
+    speech("Skopiowano")
+    end
   end
   end
     case sel.index
-    when 0
+    when 1
       $toscene = false
       retry
-      when 1
+      when 2
         $toscene = true
         retry
-    when 2
+    when 3
       speech("Tryb awaryjny")
       speech_wait
       @sels = ["Wyjście","Zainstaluj program ponownie"]
@@ -171,7 +180,7 @@ loop do
             $toscene = true      
             retry
       end
-        when 3
+        when 4
     fail if $DEBUG == true
   end
   end

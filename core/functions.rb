@@ -301,8 +301,7 @@ def focus
     if kod >= 65 and kod <= 90
       kod += 32
     end
-    p kod
-          case kod
+              case kod
   when 32
     r=" "
     when 46
@@ -552,8 +551,12 @@ attr_reader :grayed
       index = 0 if index >= options.size
       self.index = index
             @commandoptions = []
+            @hotkeys = {}
             for i in 0..options.size - 1
-              @commandoptions.push(options[i]) if options[i] != nil
+for j in 0..options[i].size-1
+  @hotkeys[options[i][j+1..j+1].upcase[0]] = i if options[i][j..j] == "&"
+  end
+            @commandoptions.push(options[i].delete("&")) if options[i] != nil
             end
                         @grayed = []
             for i in 0..@commandoptions.size - 1
@@ -562,8 +565,15 @@ attr_reader :grayed
             @border = border
             options[index]="" if options[index]==nil
             header="" if header==nil
-            speech(dict(header) + "\r\n" + dict(options[index]))
-    end
+            sp = dict(header) + "\r\n" + dict(options[self.index].delete("&"))
+ss = false
+for k in @hotkeys.keys
+  ss = k if @hotkeys[k] == self.index
+end
+sp += "...\r\nSkrót: " + ASCII(ss) if ss.is_a?(Integer)
+            speech(sp)
+    @header = header
+            end
     def update
       oldindex = self.index
       options = @commandoptions
@@ -625,6 +635,7 @@ if Input.trigger?(Input::LEFT)
     suc = false
   for i in 65..90
     if $key[i] == true
+      if @hotkeys[i] == nil
       @run = true
             for j in self.index + 1..options.size - 1
         opt = options[j][0]
@@ -650,7 +661,11 @@ if Input.trigger?(Input::LEFT)
       end
       if suc == false
       else
-                end
+      end
+    else
+      @index = @hotkeys[i]
+      $enter = 2
+      end
       end
     end
     if enter
@@ -671,7 +686,13 @@ if Input.trigger?(Input::LEFT)
     end
 if @run == true
   speech_stop
-speech(options[self.index])
+sp = dict(options[self.index])
+ss = false
+for k in @hotkeys.keys
+  ss = k if @hotkeys[k] == self.index
+end
+sp += "...\r\nSkrót: " + ASCII(ss) if ss.is_a?(Integer)
+speech(sp)
 end
     if oldindex != self.index
   play("list_focus")
@@ -687,7 +708,16 @@ end
 end
 def disable_item(id)
   @grayed[id] = true
-  end
+end
+def focus
+  sp = dict(@header) + "\r\n" + dict(@commandoptions[self.index])
+ss = false
+for k in @hotkeys.keys
+  ss = k if @hotkeys[k] == self.index
+end
+sp += "...\r\nSkrót: " + ASCII(ss) if ss.is_a?(Integer)
+speech(sp)
+end
   end
   
   def escape(fromdll = false)
@@ -721,7 +751,17 @@ def disable_item(id)
     end
   else
     if $key[0x11] == false
-      r = $key[0xA4]
+      if $key[0xA4]
+        t = Time.now.to_i
+        delay
+                        if Time.now.to_i <= t+1
+        return true
+      else
+        return false
+        end
+              else
+                return false
+        end
           else
       return(false)
       end
@@ -729,6 +769,12 @@ def disable_item(id)
     end
     
     def enter(fromdll = false, space = false)
+      if $enter.is_a?(Integer)
+        if $enter > 0
+        $enter -= 1
+        return true
+        end
+        end
       if fromdll == true
     enter = Win32API.new($eltenlib,"KeyState",'i','i').call(0x0D)
     if enter > 0
@@ -1039,7 +1085,8 @@ end
        err = wntemp[0]
 messages = wntemp[1].to_i
 posts = wntemp[2].to_i
-                                    if messages <= 0 and posts <= 0
+blogposts = wntemp[3].to_i
+                                    if messages <= 0 and posts <= 0 and blogposts <= 0
   speech("Nie ma nic nowego.") if quiet != true
 else
   $scene = Scene_WhatsNew.new(true)
@@ -1138,9 +1185,7 @@ speech("Nazwa tematu: " + name)
 speech_wait
 speech("Podmień pliki domyślnego tematu dźwiękowego w utworzonym katalogu plikami, które mają wchodzić w jego skład.")
 speech_wait
-speech("Co chcesz zrobić?")
-speech_wait
-sel = SelectLR.new(["Otwórz folder tematu w plikach","Otwórz folder tematu w systemowym eksploratorze plików","Zamknij"])
+sel = SelectLR.new(["Otwórz folder tematu w plikach","Otwórz folder tematu w systemowym eksploratorze plików","Zamknij"],true,0,"Co chcesz zrobić?")
 loop do
   loop_update
   sel.update
@@ -1260,8 +1305,8 @@ createprocess = Win32API.new('kernel32','CreateProcess', params, 'I')
          startinfo = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     startinfo = startinfo.pack('LLLLLLLLLLLLSSLLLL')
     procinfo  = [0,0,0,0].pack('LLLL')
-        createprocess.call(0, file, 0, 0, 0, 0, 0, 0, startinfo, procinfo)
-            return procinfo[8,4].unpack('L').first # pid
+        pr = createprocess.call(0, file, 0, 0, 0, 0, 0, 0, startinfo, procinfo)
+            return procinfo[0,4].unpack('L').first # pid
           end
           
           def createdebuginfo
@@ -1597,6 +1642,7 @@ def avatar(user)
       end
       speech("Awatar: #{user}")
       speech_wait
+      $url+"avatars/"+user
       avatar = AudioFile.new($url+"avatars/"+user)
 avatar.play            
       loop do
@@ -1823,6 +1869,7 @@ loop_update
             end
             end
           @fields[@index].focus
+          play("form_marker")
           loop_update
         end
         def update
@@ -2161,7 +2208,7 @@ def versioninfo
     nbeta = nbeta.to_i
         $nbeta = nbeta
     $nversion = nversion
-    if $nversion > $version
+    if $nversion > $version or $nbeta > $beta
       $scene = Scene_Update_Confirmation.new
     else
       speech("Brak dostępnych aktualizacji.")
